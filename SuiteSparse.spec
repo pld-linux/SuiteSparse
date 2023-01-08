@@ -1,6 +1,6 @@
 #
 # Conditional build:
-%bcond_with	metis		# build with partition support (using metis lib)
+%bcond_without	metis		# partition support (using metis lib)
 
 %define		suite_ver	4.3.1
 %define		amd_ver		2.4.0
@@ -847,7 +847,7 @@ Statyczna biblioteka UMFPACK.
 	CXXFLAGS="%{rpmcxxflags}" \
 	LDFLAGS="%{rpmldflags}" \
 	%{!?with_metis:CHOLMOD_CONFIG=-DNPARTITION} \
-	%{?with_metis:WITH_METIS=1} \
+	%{?with_metis:METIS_PATH=%{_includedir}} \
 	LIB_SUBDIR=%{_lib}
 
 %install
