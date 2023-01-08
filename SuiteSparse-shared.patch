@@ -667,8 +667,8 @@
  reade: reade.f
 -	$(F77) $(FFLAGS) -O -o reade reade.f
 +	libtool --tag=F77 --mode=link $(F77) $(LDFLAGS) $(FFLAGS) -O -o reade reade.f
---- SuiteSparse/CHOLMOD/Lib/Makefile.orig	2014-03-23 01:46:29.000000000 +0100
-+++ SuiteSparse/CHOLMOD/Lib/Makefile	2023-01-07 17:56:47.118623582 +0100
+--- SuiteSparse/CHOLMOD/Lib/Makefile.orig	2014-09-04 20:44:03.000000000 +0200
++++ SuiteSparse/CHOLMOD/Lib/Makefile	2023-01-08 20:34:45.279207016 +0100
 @@ -21,7 +21,7 @@ ifeq (,$(findstring -DNCAMD, $(CHOLMOD_C
          ifeq (../../CCOLAMD, $(wildcard ../../CCOLAMD))
              # CAMD and CCOLAMD are requested and available
@@ -707,7 +707,7 @@
  
  clean:
  	- $(RM) $(CLEAN)
-@@ -156,9 +156,13 @@ DL = $(LCORE) $(LCHECK) $(LCHOLESKY) $(L
+@@ -164,9 +164,13 @@ DL = $(LCORE) $(LCHECK) $(LCHOLESKY) $(L
  # to compile just the double/int version, use OBJ = $(DI)
  OBJ = $(DI) $(DL)
  
@@ -724,7 +724,7 @@
  
  $(OBJ): $(INC)
  
-@@ -167,24 +171,24 @@ $(OBJ): $(INC)
+@@ -175,24 +179,24 @@ $(OBJ): $(INC)
  #-------------------------------------------------------------------------------
  
  cholmod_check.o: ../Check/cholmod_check.c
@@ -755,7 +755,7 @@
  
  
  #-------------------------------------------------------------------------------
-@@ -192,98 +196,98 @@ cholmod_l_write.o: ../Check/cholmod_writ
+@@ -200,98 +204,98 @@ cholmod_l_write.o: ../Check/cholmod_writ
  #-------------------------------------------------------------------------------
  
  cholmod_common.o: ../Core/cholmod_common.c
@@ -884,7 +884,7 @@
  
  
  #-------------------------------------------------------------------------------
-@@ -291,116 +295,116 @@ cholmod_l_version.o: ../Core/cholmod_ver
+@@ -299,116 +303,116 @@ cholmod_l_version.o: ../Core/cholmod_ver
  #-------------------------------------------------------------------------------
  
  cholmod_amd.o: ../Cholesky/cholmod_amd.c
@@ -1035,7 +1035,7 @@
  
  
  #-------------------------------------------------------------------------------
-@@ -408,88 +412,88 @@ cholmod_l_nesdis.o: ../Partition/cholmod
+@@ -416,88 +420,88 @@ cholmod_l_nesdis.o: ../Partition/cholmod
  #-------------------------------------------------------------------------------
  
  cholmod_horzcat.o: ../MatrixOps/cholmod_horzcat.c
@@ -1148,7 +1148,7 @@
  
  
  #-------------------------------------------------------------------------------
-@@ -499,27 +503,27 @@ cholmod_l_updown.o: ../Modify/cholmod_up
+@@ -507,27 +511,27 @@ cholmod_l_updown.o: ../Modify/cholmod_up
  cholmod_super_numeric.o: ../Supernodal/cholmod_super_numeric.c \
          ../GPU/t_cholmod_gpu.c \
  	../Supernodal/t_cholmod_super_numeric.c
@@ -1182,12 +1182,7 @@
  
  #-------------------------------------------------------------------------------
  # GPU module
-@@ -532,12 +536,12 @@ cholmod_l_super_solve.o: ../Supernodal/c
- 
- cholmod_gpu_kernels.o: ../GPU/cholmod_gpu_kernels.c \
-         ../GPU/cholmod_gpu_kernels.cu
--	$(C) -c $(I) $<
-+	libtool --tag=CC --mode=compile $(C) -c $(I) $<
+@@ -537,8 +541,8 @@ cholmod_gpu_kernels.o: ../GPU/cholmod_gp
  	$(NVCC) -I../../SuiteSparse_config -Xcompiler -fPIC -O3  -gencode=arch=compute_20,code=sm_20 -gencode=arch=compute_30,code=sm_30 -gencode=arch=compute_35,code=sm_35 -c ../GPU/cholmod_gpu_kernels.cu
  
  cholmod_gpu.o: ../GPU/cholmod_gpu.c 
@@ -2053,8 +2048,8 @@
 +	$(RM) $(DESTDIR)$(INSTALL_LIB)/librbio.la
 +	$(RM) $(DESTDIR)$(INSTALL_INCLUDE)/RBio.h
  
---- SuiteSparse/SPQR/Demo/Makefile.orig	2014-07-14 21:46:58.000000000 +0200
-+++ SuiteSparse/SPQR/Demo/Makefile	2023-01-07 21:33:51.208066033 +0100
+--- SuiteSparse/SPQR/Demo/Makefile.orig	2015-03-25 00:54:30.000000000 +0100
++++ SuiteSparse/SPQR/Demo/Makefile	2023-01-08 20:39:26.207685095 +0100
 @@ -20,9 +20,9 @@ ifeq (,$(findstring -DNPARTITION, $(CHOL
          ifeq (../../CAMD, $(wildcard ../../CAMD))
              ifeq (../../CCOLAMD, $(wildcard ../../CCOLAMD))
@@ -2066,26 +2061,37 @@
 +                    ../../CAMD/Lib/libcamd.la
 +                I_WITH_PARTITION = -I$(METIS_PATH) \
                      -I../../CCOLAMD/Include -I../../CAMD/Include
-                 CONFIG =
+                 CONFIG_PARTITION =
              endif
-@@ -31,10 +31,10 @@ ifeq (,$(findstring -DNPARTITION, $(CHOL
- endif
+@@ -35,8 +35,8 @@ endif
+ # the optional SPQRGPU module requires CUDA, SuiteSparse_GPURuntime, GPUQREngine
+ ifneq ($(GPU_CONFIG),)
+     LIB_WITH_SPQRGPU = $(CUDART_LIB) $(CUBLAS_LIB) \
+-        ../../SuiteSparse_GPURuntime/Lib/libSuiteSparse_GPURuntime.a \
+-        ../../GPUQREngine/Lib/libGPUQREngine.a
++        ../../SuiteSparse_GPURuntime/Lib/libSuiteSparse_GPURuntime.la \
++        ../../GPUQREngine/Lib/libGPUQREngine.la
+     I_WITH_SPQRGPU = -I../../SuiteSparse_GPURuntime/Include \
+         -I../../GPUQREngine/Include \
+         -I$(CUDA_INC_PATH)
+@@ -47,10 +47,10 @@ endif
+ 
  #-------------------------------------------------------------------------------
  
 -CLIB = ../Lib/libspqr.a \
--        ../../SuiteSparse_config/libsuitesparseconfig.a \
--	../../CHOLMOD/Lib/libcholmod.a ../../AMD/Lib/libamd.a \
--	../../COLAMD/Lib/libcolamd.a $(LIB_WITH_PARTITION)
+-       ../../SuiteSparse_config/libsuitesparseconfig.a \
+-       ../../CHOLMOD/Lib/libcholmod.a ../../AMD/Lib/libamd.a \
+-       ../../COLAMD/Lib/libcolamd.a \
 +CLIB = ../Lib/libspqr.la \
-+        ../../SuiteSparse_config/libsuitesparseconfig.la \
-+	../../CHOLMOD/Lib/libcholmod.la ../../AMD/Lib/libamd.la \
-+	../../COLAMD/Lib/libcolamd.la $(LIB_WITH_PARTITION)
++       ../../SuiteSparse_config/libsuitesparseconfig.la \
++       ../../CHOLMOD/Lib/libcholmod.la ../../AMD/Lib/libamd.la \
++       ../../COLAMD/Lib/libcolamd.la \
+        $(LIB_WITH_PARTITION) \
+        $(LIB_WITH_SPQRGPU)
  
- # use the BLAS and LAPACK defined by SuiteSparse_config.mk; do not use valgrind 
- FLIB = $(LAPACK) $(BLAS)
-@@ -106,30 +106,27 @@ cdemo: qrdemoc
- 	- $(V) ./qrdemoc < ../Matrix/Ragusa16.mtx
- 	- $(V) ./qrdemoc < ../Matrix/young1c.mtx
+@@ -145,36 +145,33 @@ gpu4: qrdemo_gpu
+ 	- $(V) ./qrdemo_gpu  ../Matrix/Groebner_id2003_aug.mtx 6
+ 	- $(V) ./qrdemo_gpu  ../Matrix/Franz6_id1959_aug.mtx 6
  
 -../Lib/libspqr.a:
 +../Lib/libspqr.la:
@@ -2115,26 +2121,55 @@
 +../../CAMD/Lib/libcamd.la:
  	- ( cd ../../CAMD && $(MAKE) library )
  
+-../../SuiteSparse_GPURuntime/Lib/libSuiteSparse_GPURuntime.a:
++../../SuiteSparse_GPURuntime/Lib/libSuiteSparse_GPURuntime.la:
+ 	- ( cd ../../SuiteSparse_GPURuntime && $(MAKE) )
+ 
+-../../GPUQREngine/Lib/libGPUQREngine.a:
++../../GPUQREngine/Lib/libGPUQREngine.la:
+ 	- ( cd ../../GPUQREngine && $(MAKE) )
+ 
 -$(METIS):
--	( cd $(METIS_PATH) && $(MAKE) )
+-	- ( cd $(METIS_PATH) && $(MAKE) )
 -
  library:
  	( cd ../Lib ; $(MAKE) )
  	( cd ../../AMD ; $(MAKE) library )
-@@ -164,10 +161,10 @@ LIBS += $(CUDART_LIB) $(CUBLAS_LIB)
+@@ -220,28 +217,28 @@ LIBS += $(CUDART_LIB) $(CUBLAS_LIB)
  endif
  
  qrsimple: qrsimple.cpp library $(INC)
 -	$(C) qrsimple.cpp -o qrsimple $(LIBS)
-+	libtool --tag=CXX --mode=link $(C) $(LDFLAGS) qrsimple.cpp -o qrsimple $(LIBS)
++	libtool --tag=CXX --mode=link $(C) qrsimple.cpp -o qrsimple $(LIBS)
  
  qrdemo: qrdemo.cpp library $(INC)
 -	$(C) qrdemo.cpp -o qrdemo $(LIBS)
-+	libtool --tag=CXX --mode=link $(C) $(LDFLAGS) qrdemo.cpp -o qrdemo $(LIBS)
++	libtool --tag=CXX --mode=link $(C) qrdemo.cpp -o qrdemo $(LIBS)
  
- # compile the C code with gcc, but link with g++ to use SuiteSparseQR:
+ qrdemo_gpu: qrdemo_gpu.cpp library $(INC)
+ ifneq ($(GPU_CONFIG),)
+-	$(C) qrdemo_gpu.cpp -o qrdemo_gpu $(LIBS)
++	libtool --tag=CXX --mode=link $(C) qrdemo_gpu.cpp -o qrdemo_gpu $(LIBS)
+ else
+ 	echo
+ endif
  
-@@ -175,11 +172,11 @@ qrdemoc.o: qrdemoc.c $(INC)
+ qrdemo_gpu2: qrdemo_gpu2.cpp library $(INC)
+ ifneq ($(GPU_CONFIG),)
+-	$(C) qrdemo_gpu2.cpp -o qrdemo_gpu2 $(LIBS)
++	libtool --tag=CXX --mode=link $(C) qrdemo_gpu2.cpp -o qrdemo_gpu2 $(LIBS)
+ else
+ 	echo
+ endif
+ 
+ qrdemo_gpu3: qrdemo_gpu3.cpp library $(INC)
+ ifneq ($(GPU_CONFIG),)
+-	$(C) qrdemo_gpu3.cpp -o qrdemo_gpu3 $(LIBS)
++	libtool --tag=CXX --mode=link $(C) qrdemo_gpu3.cpp -o qrdemo_gpu3 $(LIBS)
+ else
+ 	echo
+ endif
+@@ -252,11 +249,11 @@ qrdemoc.o: qrdemoc.c $(INC)
  	$(CC) $(CF) $(SPQR_CONFIG) -ansi $(I) -c $<
  
  qrdemoc: qrdemoc.o library $(INC)
@@ -2148,8 +2183,8 @@
 -	$(C) -o qrsimplec qrsimplec.o $(LIBS)
 +	libtool --tag=CXX --mode=link $(C) $(LDFLAGS) -o qrsimplec qrsimplec.o $(LIBS)
  
---- SuiteSparse/SPQR/Lib/Makefile.orig	2012-06-21 07:37:08.000000000 +0200
-+++ SuiteSparse/SPQR/Lib/Makefile	2023-01-07 21:37:34.776854856 +0100
+--- SuiteSparse/SPQR/Lib/Makefile.orig	2014-09-17 22:29:37.000000000 +0200
++++ SuiteSparse/SPQR/Lib/Makefile	2023-01-08 20:42:55.896549113 +0100
 @@ -20,9 +20,9 @@ ifeq (,$(findstring -DNPARTITION, $(CHOL
          ifeq (../../CAMD, $(wildcard ../../CAMD))
              ifeq (../../CCOLAMD, $(wildcard ../../CCOLAMD))
@@ -2161,9 +2196,9 @@
 +                    ../../CAMD/Lib/libcamd.la
 +                I_WITH_PARTITION = -I$(METIS_PATH) \
                      -I../../CCOLAMD/Include -I../../CAMD/Include
-                 CONFIG =
+                 CONFIG_PARTITION =
              endif
-@@ -37,14 +37,14 @@ endif
+@@ -39,14 +39,14 @@ endif
  # 	-Wredundant-decls -Wdisabled-optimization \
  # 	-ansi -fexceptions
  
@@ -2181,9 +2216,9 @@
  
  clean:
  	- $(RM) $(CLEAN)
-@@ -101,126 +101,130 @@ I = -I../../CHOLMOD/Include -I../../Suit
+@@ -116,135 +116,139 @@ endif
  
- C = $(CXX) $(CF) $(SPQR_CONFIG) $(CONFIG) $(I)
+ C = $(CXX) $(CF) $(SPQR_CONFIG) $(CONFIG_PARTITION) $(I)
  
 -libspqr.a: $(OBJ)
 -	$(ARCHIVE)  libspqr.a $(OBJ)
@@ -2353,6 +2388,18 @@
 +	libtool --tag=CXX --mode=compile $(C) -c $<
  
  spqr_rmap.o: ../Source/spqr_rmap.cpp
+-	$(C) -c $<
++	libtool --tag=CXX --mode=compile $(C) -c $<
+ 
+ spqrgpu_kernel.o: ../SPQRGPU/spqrgpu_kernel.cpp
+-	$(C) -c $<
++	libtool --tag=CXX --mode=compile $(C) -c $<
+ 
+ spqrgpu_buildAssemblyMaps.o: ../SPQRGPU/spqrgpu_buildAssemblyMaps.cpp
+-	$(C) -c $<
++	libtool --tag=CXX --mode=compile $(C) -c $<
+ 
+ spqrgpu_computeFrontStaging.o: ../SPQRGPU/spqrgpu_computeFrontStaging.cpp
 -	$(C) -c $<
 +	libtool --tag=CXX --mode=compile $(C) -c $<
 --- SuiteSparse/SPQR/Makefile.orig	2014-07-14 22:05:03.000000000 +0200

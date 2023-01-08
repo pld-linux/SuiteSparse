@@ -1,31 +1,36 @@
+# TODO: GPU_CONFIG (CUDA) support, TBB
 #
 # Conditional build:
 %bcond_without	metis		# partition support (using metis lib)
 
-%define		suite_ver	4.3.1
-%define		amd_ver		2.4.0
-%define		btf_ver		1.2.0
-%define		camd_ver	2.4.0
-%define		ccolamd_ver	2.9.0
-%define		colamd_ver	2.9.0
-%define		cholmod_ver	3.0.1
-%define		csparse_ver	3.1.3
-%define		cxsparse_ver	3.1.3
-%define		klu_ver		1.3.0
-%define		ldl_ver		2.2.0
-%define		rbio_ver	2.2.0
-%define		spqr_ver	1.3.3
-%define		umfpack_ver	5.7.0
+# main package version
+%define		suite_ver	4.4.6
+# see */Makefile /VERSION
+%define		amd_ver		2.4.1
+%define		btf_ver		1.2.1
+%define		camd_ver	2.4.1
+%define		ccolamd_ver	2.9.1
+%define		colamd_ver	2.9.1
+%define		cholmod_ver	3.0.6
+%define		csparse_ver	3.1.4
+%define		cxsparse_ver	3.1.4
+%define		klu_ver		1.3.3
+%define		ldl_ver		2.2.1
+%define		rbio_ver	2.2.1
+%define		spqr_ver	2.0.2
+%define		umfpack_ver	5.7.1
+%define		gpuruntime_ver	1.0.0
+%define		gpuqrengine_ver	1.0.0
 
 Summary:	A Suite of Sparse matrix packages
 Summary(pl.UTF-8):	Zbiór pakietów do operacji na macierzach rzadkich
 Name:		SuiteSparse
 Version:	%{suite_ver}
-Release:	7
+Release:	1
 License:	LGPL v2.1+, GPL v2+
 Group:		Libraries
 Source0:	https://people.engr.tamu.edu/davis/SuiteSparse/%{name}-%{version}.tar.gz
-# Source0-md5:	f8f26a3b1c7f82444c0db0b375215287
+# Source0-md5:	131a3a5e2dee784cd946284e44ce9af2
 Patch0:		%{name}-config.patch
 Patch1:		%{name}-shared.patch
 Patch2:		%{name}-externc.patch
@@ -343,7 +348,7 @@ License:	LGPL v2.1+
 Group:		Development/Libraries
 Requires:	%{name}-CCOLAMD = %{ccolamd_ver}-%{release}
 Requires:	%{name}-config = %{suite_ver}-%{release}
-Obsoletes:	CCOLAMD < 2.9.0-4
+Obsoletes:	CCOLAMD-devel < 2.9.0-4
 
 %description CCOLAMD-devel
 Header files for CCOLAMD library.
@@ -358,7 +363,7 @@ Version:	%{ccolamd_ver}
 License:	LGPL v2.1+
 Group:		Development/Libraries
 Requires:	%{name}-CCOLAMD-devel = %{ccolamd_ver}-%{release}
-Obsoletes:	CCOLAMD < 2.9.0-4
+Obsoletes:	CCOLAMD-static < 2.9.0-4
 
 %description CCOLAMD-static
 Static CCOLAMD library.
@@ -925,7 +930,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files AMD
 %defattr(644,root,root,755)
-%doc AMD/README.txt AMD/Doc/{ChangeLog,License}
+%doc AMD/README.txt AMD/Doc/{ChangeLog,License.txt}
 %attr(755,root,root) %{_libdir}/libamd.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libamd.so.0
 

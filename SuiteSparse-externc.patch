@@ -1,21 +1,19 @@
---- SuiteSparse/SuiteSparse_config/SuiteSparse_config.h.orig	2014-07-16 23:35:20.000000000 +0200
-+++ SuiteSparse/SuiteSparse_config/SuiteSparse_config.h	2023-01-03 21:51:47.241179236 +0100
-@@ -38,14 +38,14 @@
+--- SuiteSparse/SuiteSparse_config/SuiteSparse_config.h.orig	2023-01-08 20:43:25.056391141 +0100
++++ SuiteSparse/SuiteSparse_config/SuiteSparse_config.h	2023-01-08 20:44:40.592648593 +0100
+@@ -38,13 +38,13 @@
  #ifndef SUITESPARSE_CONFIG_H
  #define SUITESPARSE_CONFIG_H
  
--#ifdef __cplusplus
--extern "C" {
--#endif
--
- #include <limits.h>
- #include <stdlib.h>
- #include <math.h>
- 
-+#ifdef __cplusplus
-+extern "C" {
-+#endif
++#include <limits.h>
++#include <stdlib.h>
 +
+ #ifdef __cplusplus
+ extern "C" {
+ #endif
+ 
+-#include <limits.h>
+-#include <stdlib.h>
+-
  /* ========================================================================== */
  /* === SuiteSparse_long ===================================================== */
  /* ========================================================================== */
@@ -222,11 +220,11 @@
 +#endif
 +
  #endif
---- SuiteSparse/CHOLMOD/Include/cholmod_core.h.orig	2014-07-15 00:01:23.000000000 +0200
-+++ SuiteSparse/CHOLMOD/Include/cholmod_core.h	2023-01-07 17:11:23.860043407 +0100
-@@ -294,6 +294,11 @@
- 
- 
+--- SuiteSparse/CHOLMOD/Include/cholmod_core.h.orig	2015-07-15 05:18:18.000000000 +0200
++++ SuiteSparse/CHOLMOD/Include/cholmod_core.h	2023-01-08 20:50:15.337501791 +0100
+@@ -289,6 +289,11 @@
+ #define CHOLMOD_HOST_SUPERNODE_BUFFERS 8
+ #define CHOLMOD_DEVICE_STREAMS 2
  
 +/* make it easy for C++ programs to include CHOLMOD */
 +#ifdef __cplusplus
@@ -236,7 +234,7 @@
  /* ========================================================================== */
  /* === CHOLMOD objects ====================================================== */
  /* ========================================================================== */
-@@ -2432,4 +2437,8 @@ int cholmod_l_version (int version [3])
+@@ -2447,4 +2452,8 @@ int cholmod_l_version (int version [3])
  
  #endif
  
@@ -378,11 +376,11 @@
 +#endif
 +
  #endif
---- SuiteSparse/CHOLMOD/Include/cholmod.h.orig	2014-07-14 21:46:58.000000000 +0200
-+++ SuiteSparse/CHOLMOD/Include/cholmod.h	2023-01-07 17:21:32.796744513 +0100
-@@ -79,11 +79,6 @@
- #include <cuda_runtime.h>
- #endif
+--- SuiteSparse/CHOLMOD/Include/cholmod.h.orig	2014-09-16 22:27:35.000000000 +0200
++++ SuiteSparse/CHOLMOD/Include/cholmod.h	2023-01-08 20:50:28.674096207 +0100
+@@ -75,11 +75,6 @@
+ #ifndef CHOLMOD_H
+ #define CHOLMOD_H
  
 -/* make it easy for C++ programs to include CHOLMOD */
 -#ifdef __cplusplus
@@ -392,7 +390,7 @@
  /* assume large file support.  If problems occur, compile with -DNLARGEFILE */
  #include "cholmod_io64.h"
  
-@@ -126,8 +121,4 @@ extern "C" {
+@@ -123,8 +118,4 @@ extern "C" {
  #include "cholmod_gpu.h"
  #endif
  
@@ -401,10 +399,10 @@
 -#endif
 -
  #endif
---- SuiteSparse/CSparse/Include/cs.h.orig	2014-03-25 15:57:25.000000000 +0100
-+++ SuiteSparse/CSparse/Include/cs.h	2023-01-07 18:34:53.096239378 +0100
+--- SuiteSparse/CSparse/Include/cs.h.orig	2014-10-09 22:01:10.000000000 +0200
++++ SuiteSparse/CSparse/Include/cs.h	2023-01-08 20:53:36.066414349 +0100
 @@ -14,6 +14,10 @@
- #define CS_DATE "Mar 26, 2014"    /* CSparse release date */
+ #define CS_DATE "Oct 10, 2014"    /* CSparse release date */
  #define CS_COPYRIGHT "Copyright (c) Timothy A. Davis, 2006-2014"
  
 +#ifdef __cplusplus
@@ -467,8 +465,8 @@
  /* -------------------------------------------------------------------------- */
  /* Symbolic object - contains the pre-ordering computed by klu_analyze */
  /* -------------------------------------------------------------------------- */
---- SuiteSparse/LDL/Include/ldl.h.orig	2014-03-21 20:21:11.000000000 +0100
-+++ SuiteSparse/LDL/Include/ldl.h	2023-01-07 20:22:25.274618261 +0100
+--- SuiteSparse/LDL/Include/ldl.h.orig	2014-10-09 22:29:41.000000000 +0200
++++ SuiteSparse/LDL/Include/ldl.h	2023-01-08 20:54:57.482639946 +0100
 @@ -38,6 +38,10 @@
  
  #endif
@@ -481,7 +479,7 @@
  /* === int version ========================================================== */
  /* ========================================================================== */
 @@ -110,3 +114,6 @@ SuiteSparse_long ldl_l_valid_matrix ( Su
- #define LDL_SUBSUB_VERSION 0
+ #define LDL_SUBSUB_VERSION 1
  #define LDL_VERSION LDL_VERSION_CODE(LDL_MAIN_VERSION,LDL_SUB_VERSION)
  
 +#ifdef __cplusplus
@@ -530,20 +528,20 @@
  #endif
  
  /* ========================================================================== */
---- SuiteSparse/SPQR/Include/SuiteSparseQR.hpp.orig	2014-03-19 20:35:43.000000000 +0100
-+++ SuiteSparse/SPQR/Include/SuiteSparseQR.hpp	2023-01-07 21:29:05.256281833 +0100
+--- SuiteSparse/SPQR/Include/SuiteSparseQR.hpp.orig	2023-01-08 20:55:20.329182842 +0100
++++ SuiteSparse/SPQR/Include/SuiteSparseQR.hpp	2023-01-08 20:56:01.678958831 +0100
 @@ -11,11 +11,8 @@
  // include files
  // -----------------------------------------------------------------------------
  
 -extern "C"
 -{
- #include "cholmod.h"
  #include "SuiteSparseQR_definitions.h"
+ #include "cholmod.h"
 -}
  
  // =============================================================================
- // === spqr_symbolic ===========================================================
+ // === spqr_gpu ================================================================
 --- SuiteSparse/SPQR/Include/spqr.hpp.orig	2014-03-19 20:39:23.000000000 +0100
 +++ SuiteSparse/SPQR/Include/spqr.hpp	2023-01-07 21:29:30.076147372 +0100
 @@ -1015,9 +1015,7 @@ inline Long spqr_mult (Long a, Long b, i
