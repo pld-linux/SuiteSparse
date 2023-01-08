@@ -1,0 +1,20 @@
+--- SuiteSparse/AMD/Demo/amd_l_demo.out.orig	2014-03-21 20:21:58.000000000 +0100
++++ SuiteSparse/AMD/Demo/amd_l_demo.out	2023-01-08 19:10:17.659993999 +0100
+@@ -6,7 +6,7 @@ AMD version 2.4.0, July 31, 2013: approx
+     (rows with more than max (10 * sqrt (n), 16) entries are
+     considered "dense", and placed last in output permutation)
+     aggressive absorption:  yes
+-    size of AMD integer: 8
++    size of AMD integer: 4
+ 
+ 
+ Input matrix:  24-by-24, with 160 entries.
+@@ -123,7 +123,7 @@ AMD version 2.4.0, July 31, 2013, result
+     number of nonzeros on diagonal:                     24
+     nonzeros in pattern of A+A' (excl. diagonal):       136
+     # dense rows/columns of A+A':                       0
+-    memory used, in bytes:                              3032
++    memory used, in bytes:                              1516
+     # of memory compactions:                            0
+ 
+     The following approximate statistics are for a subsequent

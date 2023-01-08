@@ -1,0 +1,44 @@
+--- SuiteSparse/SuiteSparse_config/SuiteSparse_config.mk.orig	2014-08-16 21:22:58.000000000 +0200
++++ SuiteSparse/SuiteSparse_config/SuiteSparse_config.mk	2023-01-03 21:21:55.047555049 +0100
+@@ -69,7 +69,7 @@
+ # C and C++ compiler flags.  The first three are standard for *.c and *.cpp
+ # Add -DNTIMER if you do use any timing routines (otherwise -lrt is required).
+ # CF = $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -O3 -fexceptions -fPIC -DNTIMER
+-  CF = $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -O3 -fexceptions -fPIC
++CF = $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -fPIC
+ # for the MKL BLAS:
+ # CF = $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -O3 -fexceptions -fPIC -I$(MKLROOT)/include -D_GNU_SOURCE
+ 
+@@ -84,7 +84,7 @@ MV = mv -f
+ 
+ # Fortran compiler (not required for 'make' or 'make library')
+ F77 = gfortran
+-F77FLAGS = $(FFLAGS) -O
++F77FLAGS = $(FFLAGS)
+ F77LIB =
+ 
+ # C and Fortran libraries.  Remove -lrt if you don't have it.
+@@ -93,8 +93,10 @@ F77LIB =
+ # LIB = -lm
+ 
+ # For "make install"
+-INSTALL_LIB = /usr/local/lib
+-INSTALL_INCLUDE = /usr/local/include
++INSTALL_PREFIX = /usr
++LIB_SUBDIR = lib
++INSTALL_LIB = $(INSTALL_PREFIX)/$(LIB_SUBDIR)
++INSTALL_INCLUDE = $(INSTALL_PREFIX)/include/suitesparse
+ 
+ # Which version of MAKE you are using (default is "make")
+ # MAKE = make
+@@ -210,8 +212,8 @@ XERBLA =
+ # The path is relative to where it is used, in CHOLMOD/Lib, CHOLMOD/MATLAB, etc.
+ # You may wish to use an absolute path.  METIS is optional.  Compile
+ # CHOLMOD with -DNPARTITION if you do not wish to use METIS.
+-METIS_PATH = ../../metis-4.0
+-METIS = ../../metis-4.0/libmetis.a
++METIS_PATH = /usr/include/metis
++METIS = -lmetis
+ 
+ #------------------------------------------------------------------------------
+ # UMFPACK configuration:
