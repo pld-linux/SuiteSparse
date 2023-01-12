@@ -399,11 +399,11 @@
 -#endif
 -
  #endif
---- SuiteSparse/CSparse/Include/cs.h.orig	2014-10-09 22:01:10.000000000 +0200
-+++ SuiteSparse/CSparse/Include/cs.h	2023-01-08 20:53:36.066414349 +0100
+--- SuiteSparse/CSparse/Include/cs.h.orig	2016-05-04 21:43:53.000000000 +0200
++++ SuiteSparse/CSparse/Include/cs.h	2023-01-11 20:42:11.645915233 +0100
 @@ -14,6 +14,10 @@
- #define CS_DATE "Oct 10, 2014"    /* CSparse release date */
- #define CS_COPYRIGHT "Copyright (c) Timothy A. Davis, 2006-2014"
+ #define CS_DATE "May 4, 2016"       /* CSparse release date */
+ #define CS_COPYRIGHT "Copyright (c) Timothy A. Davis, 2006-2016"
  
 +#ifdef __cplusplus
 +extern "C" {
@@ -465,8 +465,8 @@
  /* -------------------------------------------------------------------------- */
  /* Symbolic object - contains the pre-ordering computed by klu_analyze */
  /* -------------------------------------------------------------------------- */
---- SuiteSparse/LDL/Include/ldl.h.orig	2014-10-09 22:29:41.000000000 +0200
-+++ SuiteSparse/LDL/Include/ldl.h	2023-01-08 20:54:57.482639946 +0100
+--- SuiteSparse/LDL/Include/ldl.h.orig	2016-05-04 22:45:33.000000000 +0200
++++ SuiteSparse/LDL/Include/ldl.h	2023-01-11 20:43:28.728830972 +0100
 @@ -38,6 +38,10 @@
  
  #endif
@@ -479,7 +479,7 @@
  /* === int version ========================================================== */
  /* ========================================================================== */
 @@ -110,3 +114,6 @@ SuiteSparse_long ldl_l_valid_matrix ( Su
- #define LDL_SUBSUB_VERSION 1
+ #define LDL_SUBSUB_VERSION 6
  #define LDL_VERSION LDL_VERSION_CODE(LDL_MAIN_VERSION,LDL_SUB_VERSION)
  
 +#ifdef __cplusplus

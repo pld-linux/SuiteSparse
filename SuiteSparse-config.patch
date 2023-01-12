@@ -1,53 +1,38 @@
---- SuiteSparse/SuiteSparse_config/SuiteSparse_config.mk.orig	2014-12-22 23:21:00.000000000 +0100
-+++ SuiteSparse/SuiteSparse_config/SuiteSparse_config.mk	2023-01-08 19:27:30.627731266 +0100
-@@ -69,7 +69,7 @@
- # C and C++ compiler flags.  The first three are standard for *.c and *.cpp
- # Add -DNTIMER if you do use any timing routines (otherwise -lrt is required).
- # CF = $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -O3 -fexceptions -fPIC -DNTIMER
--  CF = $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -O3 -fexceptions -fPIC
-+CF = $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -fPIC
- # for the MKL BLAS:
- # CF = $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -O3 -fexceptions -fPIC -I$(MKLROOT)/include -D_GNU_SOURCE
- # with no optimization:
-@@ -86,7 +86,7 @@ MV = mv -f
+--- SuiteSparse/SuiteSparse_config/SuiteSparse_config.mk.orig	2017-10-04 00:20:02.000000000 +0200
++++ SuiteSparse/SuiteSparse_config/SuiteSparse_config.mk	2023-01-11 21:09:07.180496464 +0100
+@@ -89,7 +90,7 @@ SUITESPARSE_VERSION = 4.5.6
  
- # Fortran compiler (not required for 'make' or 'make library')
- F77 = gfortran
--F77FLAGS = $(FFLAGS) -O
-+F77FLAGS = $(FFLAGS)
- F77LIB =
+     # The CF macro is used by SuiteSparse Makefiles as a combination of
+     # CFLAGS, CPPFLAGS, TARGET_ARCH, and system-dependent settings.
+-    CF ?= $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) $(OPTIMIZATION) -fexceptions -fPIC
++    CF ?= $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -fPIC
  
- # C and Fortran libraries.  Remove -lrt if you don't have it.
-@@ -95,8 +95,10 @@ F77LIB =
- # LIB = -lm
+     #---------------------------------------------------------------------------
+     # OpenMP is used in CHOLMOD
+@@ -161,7 +162,7 @@ SUITESPARSE_VERSION = 4.5.6
+             LAPACK =
+         else
+             # use the OpenBLAS at http://www.openblas.net
+-            BLAS = -lopenblas
++            BLAS = -lblas
+         endif
+     endif
  
- # For "make install"
--INSTALL_LIB = /usr/local/lib
--INSTALL_INCLUDE = /usr/local/include
-+INSTALL_PREFIX = /usr
-+LIB_SUBDIR = lib
-+INSTALL_LIB = $(INSTALL_PREFIX)/$(LIB_SUBDIR)
-+INSTALL_INCLUDE = $(INSTALL_PREFIX)/include/suitesparse
+@@ -186,7 +187,7 @@ SUITESPARSE_VERSION = 4.5.6
+     # A Fortran compiler is optional.  Only required for the optional Fortran
+     # interfaces to AMD and UMFPACK.  Not needed by 'make' or 'make install'
+     F77 ?= gfortran
+-    F77FLAGS ?= $(FFLAGS) $(OPTIMIZATION)
++    F77FLAGS ?= $(FFLAGS)
  
- # Which version of MAKE you are using (default is "make")
- # MAKE = make
-@@ -133,7 +133,7 @@ INSTALL_INCLUDE = $(INSTALL_PREFIX)/incl
- # LAPACK =
+     #---------------------------------------------------------------------------
+     # NVIDIA CUDA configuration for CHOLMOD and SPQR
+@@ -339,7 +340,7 @@ SUITESPARSE_VERSION = 4.5.6
  
- # OpenBLAS
--  BLAS = -lopenblas
-+BLAS = -lblas
- # LAPACK = 
+     ifeq ($(UNAME),Linux)
+         # add the realtime library, librt, and SuiteSparse/lib
+-        LDLIBS += -lrt -Wl,-rpath=$(INSTALL_LIB)
++        LDLIBS += -lrt
+     endif
  
- # NOTE: this next option for the "Goto BLAS" has nothing to do with a "goto"
-@@ -212,8 +214,8 @@ XERBLA =
- # The path is relative to where it is used, in CHOLMOD/Lib, CHOLMOD/MATLAB, etc.
- # You may wish to use an absolute path.  METIS is optional.  Compile
- # CHOLMOD with -DNPARTITION if you do not wish to use METIS.
--METIS_PATH = ../../metis-4.0
--METIS = ../../metis-4.0/libmetis.a
-+METIS_PATH = /usr/include/metis
-+METIS = -lmetis
- 
- #------------------------------------------------------------------------------
- # UMFPACK configuration:
+     #---------------------------------------------------------------------------

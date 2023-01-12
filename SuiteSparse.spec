@@ -4,23 +4,23 @@
 %bcond_without	metis		# partition support (using metis lib)
 
 # main package version
-%define		suite_ver	4.4.6
-# see */Makefile /VERSION
-%define		amd_ver		2.4.1
-%define		btf_ver		1.2.1
-%define		camd_ver	2.4.1
-%define		ccolamd_ver	2.9.1
-%define		colamd_ver	2.9.1
-%define		cholmod_ver	3.0.6
-%define		csparse_ver	3.1.4
-%define		cxsparse_ver	3.1.4
-%define		klu_ver		1.3.3
-%define		ldl_ver		2.2.1
-%define		rbio_ver	2.2.1
-%define		spqr_ver	2.0.2
-%define		umfpack_ver	5.7.1
-%define		gpuruntime_ver	1.0.0
-%define		gpuqrengine_ver	1.0.0
+%define		suite_ver	4.5.6
+# see */Include/*.h /VER(SION)?_CODE, C*Sparse/Include/cs.h /CS_VER
+%define		amd_ver		2.4.6
+%define		btf_ver		1.2.6
+%define		camd_ver	2.4.6
+%define		ccolamd_ver	2.9.6
+%define		colamd_ver	2.9.6
+%define		cholmod_ver	3.0.11
+%define		csparse_ver	3.1.9
+%define		cxsparse_ver	3.1.9
+%define		klu_ver		1.3.8
+%define		ldl_ver		2.2.6
+%define		rbio_ver	2.2.6
+%define		spqr_ver	2.0.8
+%define		umfpack_ver	5.7.6
+%define		gpuruntime_ver	1.0.5
+%define		gpuqrengine_ver	1.0.5
 
 Summary:	A Suite of Sparse matrix packages
 Summary(pl.UTF-8):	Zbiór pakietów do operacji na macierzach rzadkich
@@ -30,12 +30,11 @@ Release:	1
 License:	LGPL v2.1+, GPL v2+
 Group:		Libraries
 Source0:	https://people.engr.tamu.edu/davis/SuiteSparse/%{name}-%{version}.tar.gz
-# Source0-md5:	131a3a5e2dee784cd946284e44ce9af2
+# Source0-md5:	eeb87a842a9b3b0425cf08d97fb3c5ec
 Patch0:		%{name}-config.patch
-Patch1:		%{name}-shared.patch
+Patch1:		%{name}-amdf77.patch
 Patch2:		%{name}-externc.patch
-Patch3:		%{name}-metis.patch
-Patch4:		%{name}-ILP32.patch
+Patch3:		%{name}-ILP32.patch
 URL:		http://suitesparse.com/
 BuildRequires:	blas-devel
 BuildRequires:	gcc-fortran
@@ -839,31 +838,48 @@ Statyczna biblioteka UMFPACK.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
 %ifnarch %{x8664} aarch64 alpha mips64 ppc64 s390x sparc64
-%patch4 -p1
+%patch3 -p1
 %endif
 
 %build
+export LD_LIBRARY_PATH=$(pwd)/lib${LD_LIBRARY_PATH+:$LD_LIBRARY_PATH}
 %{__make} -j1 \
 	CC="%{__cc}" \
 	CXX="%{__cxx}" \
 	CFLAGS="%{rpmcflags}" \
 	CXXFLAGS="%{rpmcxxflags}" \
-	LDFLAGS="%{rpmldflags}" \
+	F77=gfortran \
+	FFLAGS="%{rpmcflags}" \
+	LDFLAGS="%{rpmldflags} -L$(pwd)/lib" \
 	%{!?with_metis:CHOLMOD_CONFIG=-DNPARTITION} \
-	%{?with_metis:METIS_PATH=%{_includedir}} \
-	LIB_SUBDIR=%{_lib}
+	CUDA=no \
+	%{?with_metis:MY_METIS_LIB=-lmetis MY_METIS_INC=%{_includedir}}
 
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_libdir},%{_includedir}/suitesparse,%{_datadir}/misc}
 
 %{__make} -j1 install \
-	DESTDIR=$RPM_BUILD_ROOT \
-	LIB_SUBDIR=%{_lib}
+	CC="%{__cc}" \
+	CXX="%{__cxx}" \
+	CFLAGS="%{rpmcflags}" \
+	CXXFLAGS="%{rpmcxxflags}" \
+	F77=gfortran \
+	FFLAGS="%{rpmcflags}" \
+	LDFLAGS="%{rpmldflags} -L$RPM_BUILD_ROOT%{_libdir}" \
+	CUDA=no \
+	INSTALL=$RPM_BUILD_ROOT%{_prefix} \
+	INSTALL_INCLUDE=$RPM_BUILD_ROOT%{_includedir}/suitesparse \
+	INSTALL_LIB=$RPM_BUILD_ROOT%{_libdir} \
+	MY_METIS_LIB=-lmetis
 
 cp -p SuiteSparse_config/SuiteSparse_config.mk $RPM_BUILD_ROOT%{_datadir}/misc
+cp -p SuiteSparse_config/lib*.a */Lib/lib*.a $RPM_BUILD_ROOT%{_libdir}
+# CXSparse is superset; don't package CSparse
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/libcsparse.a
+# packaged as %doc in individual subpackages
+%{__rm} -r $RPM_BUILD_ROOT%{_docdir}/suitesparse-%{suite_ver}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -916,13 +932,13 @@ rm -rf $RPM_BUILD_ROOT
 
 %files config-libs
 %defattr(644,root,root,755)
+%doc SuiteSparse_config/README.txt
 %attr(755,root,root) %{_libdir}/libsuitesparseconfig.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libsuitesparseconfig.so.0
+%attr(755,root,root) %ghost %{_libdir}/libsuitesparseconfig.so.4
 
 %files config-devel
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libsuitesparseconfig.so
-%{_libdir}/libsuitesparseconfig.la
 
 %files config-static
 %defattr(644,root,root,755)
@@ -932,13 +948,12 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc AMD/README.txt AMD/Doc/{ChangeLog,License.txt}
 %attr(755,root,root) %{_libdir}/libamd.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libamd.so.0
+%attr(755,root,root) %ghost %{_libdir}/libamd.so.2
 
 %files AMD-devel
 %defattr(644,root,root,755)
 %doc AMD/Doc/AMD_UserGuide.pdf
 %attr(755,root,root) %{_libdir}/libamd.so
-%{_libdir}/libamd.la
 %{_includedir}/suitesparse/amd.h
 
 %files AMD-static
@@ -948,12 +963,11 @@ rm -rf $RPM_BUILD_ROOT
 %files AMD-fortran
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libamdf77.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libamdf77.so.0
+%attr(755,root,root) %ghost %{_libdir}/libamdf77.so.2
 
 %files AMD-fortran-devel
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libamdf77.so
-%{_libdir}/libamdf77.la
 
 %files AMD-fortran-static
 %defattr(644,root,root,755)
@@ -963,12 +977,11 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc BTF/README.txt BTF/Doc/ChangeLog
 %attr(755,root,root) %{_libdir}/libbtf.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libbtf.so.0
+%attr(755,root,root) %ghost %{_libdir}/libbtf.so.1
 
 %files BTF-devel
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libbtf.so
-%{_libdir}/libbtf.la
 %{_includedir}/suitesparse/btf.h
 
 %files BTF-static
@@ -977,15 +990,14 @@ rm -rf $RPM_BUILD_ROOT
 
 %files CAMD
 %defattr(644,root,root,755)
-%doc CAMD/README.txt CAMD/Doc/{ChangeLog,License}
+%doc CAMD/README.txt CAMD/Doc/{ChangeLog,License.txt}
 %attr(755,root,root) %{_libdir}/libcamd.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libcamd.so.0
+%attr(755,root,root) %ghost %{_libdir}/libcamd.so.2
 
 %files CAMD-devel
 %defattr(644,root,root,755)
 %doc CAMD/Doc/CAMD_UserGuide.pdf
 %attr(755,root,root) %{_libdir}/libcamd.so
-%{_libdir}/libcamd.la
 %{_includedir}/suitesparse/camd.h
 
 %files CAMD-static
@@ -996,12 +1008,11 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc CCOLAMD/README.txt CCOLAMD/Doc/ChangeLog
 %attr(755,root,root) %{_libdir}/libccolamd.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libccolamd.so.0
+%attr(755,root,root) %ghost %{_libdir}/libccolamd.so.2
 
 %files CCOLAMD-devel
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libccolamd.so
-%{_libdir}/libccolamd.la
 %{_includedir}/suitesparse/ccolamd.h
 
 %files CCOLAMD-static
@@ -1012,12 +1023,11 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc COLAMD/README.txt COLAMD/Doc/ChangeLog
 %attr(755,root,root) %{_libdir}/libcolamd.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libcolamd.so.0
+%attr(755,root,root) %ghost %{_libdir}/libcolamd.so.2
 
 %files COLAMD-devel
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libcolamd.so
-%{_libdir}/libcolamd.la
 %{_includedir}/suitesparse/colamd.h
 
 %files COLAMD-static
@@ -1028,13 +1038,12 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc CHOLMOD/README.txt CHOLMOD/Doc/ChangeLog
 %attr(755,root,root) %{_libdir}/libcholmod.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libcholmod.so.0
+%attr(755,root,root) %ghost %{_libdir}/libcholmod.so.3
 
 %files CHOLMOD-devel
 %defattr(644,root,root,755)
-%doc CHOLMOD/Doc/UserGuide.pdf
+%doc CHOLMOD/Doc/CHOLMOD_UserGuide.pdf
 %attr(755,root,root) %{_libdir}/libcholmod.so
-%{_libdir}/libcholmod.la
 %{_includedir}/suitesparse/cholmod*.h
 
 %files CHOLMOD-static
@@ -1045,12 +1054,11 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc CXSparse/README.txt CXSparse/Doc/{ChangeLog,License.txt}
 %attr(755,root,root) %{_libdir}/libcxsparse.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libcxsparse.so.0
+%attr(755,root,root) %ghost %{_libdir}/libcxsparse.so.3
 
 %files CXSparse-devel
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libcxsparse.so
-%{_libdir}/libcxsparse.la
 %{_includedir}/suitesparse/cs.h
 
 %files CXSparse-static
@@ -1061,13 +1069,12 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc KLU/README.txt KLU/Doc/ChangeLog
 %attr(755,root,root) %{_libdir}/libklu.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libklu.so.0
+%attr(755,root,root) %ghost %{_libdir}/libklu.so.1
 
 %files KLU-devel
 %defattr(644,root,root,755)
 %doc KLU/Doc/{KLU_UserGuide,palamadai_e}.pdf
 %attr(755,root,root) %{_libdir}/libklu.so
-%{_libdir}/libklu.la
 %{_includedir}/suitesparse/klu.h
 
 %files KLU-static
@@ -1078,13 +1085,12 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc LDL/README.txt LDL/Doc/ChangeLog
 %attr(755,root,root) %{_libdir}/libldl.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libldl.so.0
+%attr(755,root,root) %ghost %{_libdir}/libldl.so.2
 
 %files LDL-devel
 %defattr(644,root,root,755)
 %doc LDL/Doc/ldl_userguide.pdf
 %attr(755,root,root) %{_libdir}/libldl.so
-%{_libdir}/libldl.la
 %{_includedir}/suitesparse/ldl.h
 
 %files LDL-static
@@ -1095,12 +1101,11 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc RBio/README.txt RBio/Doc/{ChangeLog,License.txt}
 %attr(755,root,root) %{_libdir}/librbio.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/librbio.so.0
+%attr(755,root,root) %ghost %{_libdir}/librbio.so.2
 
 %files RBio-devel
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/librbio.so
-%{_libdir}/librbio.la
 %{_includedir}/suitesparse/RBio.h
 
 %files RBio-static
@@ -1111,13 +1116,12 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc SPQR/README.txt SPQR/Doc/ChangeLog
 %attr(755,root,root) %{_libdir}/libspqr.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libspqr.so.0
+%attr(755,root,root) %ghost %{_libdir}/libspqr.so.2
 
 %files SPQR-devel
 %defattr(644,root,root,755)
 %doc SPQR/Doc/{algo_spqr,spqr,spqr_user_guide}.pdf
 %attr(755,root,root) %{_libdir}/libspqr.so
-%{_libdir}/libspqr.la
 %{_includedir}/suitesparse/SuiteSparseQR.hpp
 %{_includedir}/suitesparse/SuiteSparseQR*.h
 %{_includedir}/suitesparse/spqr.hpp
@@ -1128,15 +1132,14 @@ rm -rf $RPM_BUILD_ROOT
 
 %files UMFPACK
 %defattr(644,root,root,755)
-%doc UMFPACK/README.txt UMFPACK/Doc/{ChangeLog,License}
+%doc UMFPACK/README.txt UMFPACK/Doc/{ChangeLog,License.txt}
 %attr(755,root,root) %{_libdir}/libumfpack.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libumfpack.so.0
+%attr(755,root,root) %ghost %{_libdir}/libumfpack.so.5
 
 %files UMFPACK-devel
 %defattr(644,root,root,755)
-%doc UMFPACK/Doc/{QuickStart,UserGuide}.pdf
+%doc UMFPACK/Doc/UMFPACK_{QuickStart,UserGuide}.pdf
 %attr(755,root,root) %{_libdir}/libumfpack.so
-%{_libdir}/libumfpack.la
 %{_includedir}/suitesparse/umfpack*.h
 
 %files UMFPACK-static
