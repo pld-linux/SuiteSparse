@@ -36,3 +36,56 @@
      endif
  
      #---------------------------------------------------------------------------
+--- SuiteSparse/CSparse/Lib/Makefile.orig	2017-12-23 20:00:31.000000000 +0100
++++ SuiteSparse/CSparse/Lib/Makefile	2023-01-13 16:42:59.747528205 +0100
+@@ -15,7 +15,7 @@
+ # CSparse/Lib.  It does not install it for system-wide usage.
+ 
+ LIBRARY = libcsparse
+-CF = $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -O
++CF = $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH)
+ 
+ I = -I../Include
+ RANLIB = ranlib
+--- SuiteSparse/CSparse/Demo/Makefile.orig	2017-12-23 20:05:19.000000000 +0100
++++ SuiteSparse/CSparse/Demo/Makefile	2023-01-13 16:43:15.587442393 +0100
+@@ -1,4 +1,4 @@
+-CF = $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -O
++CF = $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH)
+ I = -I../Include
+ 
+ LDLIBS += -lm
+--- SuiteSparse/Makefile.orig	2017-12-22 23:45:29.000000000 +0100
++++ SuiteSparse/Makefile	2023-01-12 20:49:33.288787014 +0100
+@@ -12,7 +12,6 @@ include SuiteSparse_config/SuiteSparse_c
+ # Compile the default rules for each package
+ go: metis
+ 	( cd SuiteSparse_config && $(MAKE) )
+-	( cd GraphBLAS && $(MAKE) )
+ 	( cd AMD && $(MAKE) )
+ 	( cd BTF && $(MAKE) )
+ 	( cd CAMD && $(MAKE) )
+@@ -37,7 +36,6 @@ endif
+ # (note that CSparse is not installed; CXSparse is installed instead)
+ install: metisinstall
+ 	( cd SuiteSparse_config && $(MAKE) install )
+-	( cd GraphBLAS && $(MAKE) install )
+ 	( cd AMD && $(MAKE) install )
+ 	( cd BTF && $(MAKE) install )
+ 	( cd CAMD && $(MAKE) install )
+@@ -113,7 +111,6 @@ endif
+ # static library
+ library: metis
+ 	( cd SuiteSparse_config && $(MAKE) )
+-	( cd GraphBLAS && $(MAKE) library )
+ 	( cd AMD && $(MAKE) library )
+ 	( cd BTF && $(MAKE) library )
+ 	( cd CAMD && $(MAKE) library )
+@@ -211,7 +208,6 @@ clean:
+ 
+ # Create the PDF documentation
+ docs:
+-	( cd GraphBLAS && $(MAKE) docs )
+ 	( cd AMD && $(MAKE) docs )
+ 	( cd CAMD && $(MAKE) docs )
+ 	( cd KLU && $(MAKE) docs )

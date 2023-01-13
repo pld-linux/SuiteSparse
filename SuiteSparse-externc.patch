@@ -399,10 +399,10 @@
 -#endif
 -
  #endif
---- SuiteSparse/CSparse/Include/cs.h.orig	2016-05-04 21:43:53.000000000 +0200
-+++ SuiteSparse/CSparse/Include/cs.h	2023-01-11 20:42:11.645915233 +0100
+--- SuiteSparse/CSparse/Include/cs.h.orig	2017-09-12 18:46:19.000000000 +0200
++++ SuiteSparse/CSparse/Include/cs.h	2023-01-12 18:45:36.412409364 +0100
 @@ -14,6 +14,10 @@
- #define CS_DATE "May 4, 2016"       /* CSparse release date */
+ #define CS_DATE "Sept 12, 2017"       /* CSparse release date */
  #define CS_COPYRIGHT "Copyright (c) Timothy A. Davis, 2006-2016"
  
 +#ifdef __cplusplus

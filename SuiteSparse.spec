@@ -4,7 +4,7 @@
 %bcond_without	metis		# partition support (using metis lib)
 
 # main package version
-%define		suite_ver	4.5.6
+%define		suite_ver	5.1.2
 # see */Include/*.h /VER(SION)?_CODE, C*Sparse/Include/cs.h /CS_VER
 %define		amd_ver		2.4.6
 %define		btf_ver		1.2.6
@@ -12,7 +12,7 @@
 %define		ccolamd_ver	2.9.6
 %define		colamd_ver	2.9.6
 %define		cholmod_ver	3.0.11
-%define		csparse_ver	3.1.9
+%define		csparse_ver	3.2.0
 %define		cxsparse_ver	3.1.9
 %define		klu_ver		1.3.8
 %define		ldl_ver		2.2.6
@@ -26,11 +26,11 @@ Summary:	A Suite of Sparse matrix packages
 Summary(pl.UTF-8):	Zbiór pakietów do operacji na macierzach rzadkich
 Name:		SuiteSparse
 Version:	%{suite_ver}
-Release:	1
+Release:	2
 License:	LGPL v2.1+, GPL v2+
 Group:		Libraries
 Source0:	https://people.engr.tamu.edu/davis/SuiteSparse/%{name}-%{version}.tar.gz
-# Source0-md5:	eeb87a842a9b3b0425cf08d97fb3c5ec
+# Source0-md5:	e878549ef1060c01cdcedf323191be74
 Patch0:		%{name}-config.patch
 Patch1:		%{name}-amdf77.patch
 Patch2:		%{name}-externc.patch
@@ -159,7 +159,7 @@ Summary(pl.UTF-8):	Statyczna biblioteka AMD
 Version:	%{amd_ver}
 License:	LGPL v2.1+
 Group:		Development/Libraries
-Requires:	%{name}-devel = %{amd_ver}-%{release}
+Requires:	%{name}-AMD-devel = %{amd_ver}-%{release}
 Obsoletes:	AMD-static < 2.4.0-5
 
 %description AMD-static
@@ -934,7 +934,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc SuiteSparse_config/README.txt
 %attr(755,root,root) %{_libdir}/libsuitesparseconfig.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libsuitesparseconfig.so.4
+%attr(755,root,root) %ghost %{_libdir}/libsuitesparseconfig.so.5
 
 %files config-devel
 %defattr(644,root,root,755)
