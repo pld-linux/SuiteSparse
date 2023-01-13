@@ -21,6 +21,7 @@
 %define		umfpack_ver	5.7.6
 %define		gpuruntime_ver	1.0.5
 %define		gpuqrengine_ver	1.0.5
+# GraphBLAS version 1.1.2, but disabled here, newer version is built from GraphBLAS.spec
 
 Summary:	A Suite of Sparse matrix packages
 Summary(pl.UTF-8):	Zbiór pakietów do operacji na macierzach rzadkich
