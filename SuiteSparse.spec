@@ -27,7 +27,7 @@ Summary:	A Suite of Sparse matrix packages
 Summary(pl.UTF-8):	Zbiór pakietów do operacji na macierzach rzadkich
 Name:		SuiteSparse
 Version:	%{suite_ver}
-Release:	2
+Release:	3
 License:	LGPL v2.1+, GPL v2+
 Group:		Libraries
 Source0:	https://people.engr.tamu.edu/davis/SuiteSparse/%{name}-%{version}.tar.gz
@@ -58,6 +58,7 @@ Summary:	SuiteSparse_config development files
 Summary(pl.UTF-8):	Pliki programistyczne SuiteSparse_config
 License:	no restrictions
 Group:		Development
+Provides:	SuiteSparse_config = %{suite_ver}-%{release}
 Obsoletes:	SuiteSparse_config < 4.4
 
 %description config
@@ -77,6 +78,7 @@ Summary:	SuiteSparse_config shared library
 Summary(pl.UTF-8):	Biblioteka współdzielona SuiteSparse_config
 License:	no restrictions
 Group:		Libraries
+Provides:	SuiteSparse_config-libs = %{suite_ver}-%{release}
 Obsoletes:	SuiteSparse_config-libs < 4.4
 
 %description config-libs
@@ -93,6 +95,7 @@ License:	no restrictions
 Group:		Development/Libraries
 Requires:	%{name}-config = %{suite_ver}-%{release}
 Requires:	%{name}-config-libs = %{suite_ver}-%{release}
+Provides:	SuiteSparse_config-devel = %{suite_ver}-%{release}
 Obsoletes:	SuiteSparse_config-devel < 4.4
 
 %description config-devel
@@ -107,6 +110,7 @@ Summary(pl.UTF-8):	Biblioteka statyczna SuiteSparse_config
 License:	no restrictions
 Group:		Libraries
 Requires:	%{name}-config-devel = %{suite_ver}-%{release}
+Provides:	SuiteSparse_config-static = %{suite_ver}-%{release}
 Obsoletes:	SuiteSparse_config-static < 4.4
 
 %description config-static
@@ -122,6 +126,7 @@ Version:	%{amd_ver}
 License:	LGPL v2.1+
 Group:		Libraries
 Requires:	%{name}-config-libs = %{suite_ver}-%{release}
+Provides:	AMD = %{amd_ver}-%{release}
 Obsoletes:	AMD < 2.4.0-5
 
 %description AMD
@@ -146,6 +151,7 @@ License:	LGPL v2.1+
 Group:		Development/Libraries
 Requires:	%{name}-AMD = %{amd_ver}-%{release}
 Requires:	%{name}-config = %{suite_ver}-%{release}
+Provides:	AMD-devel = %{amd_ver}-%{release}
 Obsoletes:	AMD-devel < 2.4.0-5
 
 %description AMD-devel
@@ -161,6 +167,7 @@ Version:	%{amd_ver}
 License:	LGPL v2.1+
 Group:		Development/Libraries
 Requires:	%{name}-AMD-devel = %{amd_ver}-%{release}
+Provides:	AMD-static = %{amd_ver}-%{release}
 Obsoletes:	AMD-static < 2.4.0-5
 
 %description AMD-static
@@ -175,6 +182,7 @@ Summary(pl.UTF-8):	Wersja biblioteki AMD dla programów w Fortranie
 Version:	%{amd_ver}
 License:	LGPL v2.1+
 Group:		Libraries
+Provides:	AMD-fortran = %{amd_ver}-%{release}
 Obsoletes:	AMD-fortran < 2.4.0-5
 
 %description AMD-fortran
@@ -190,6 +198,7 @@ Version:	%{amd_ver}
 License:	LGPL v2.1+
 Group:		Development/Libraries
 Requires:	%{name}-AMD-fortran = %{amd_ver}-%{release}
+Provides:	AMD-fortran-devel = %{amd_ver}-%{release}
 Obsoletes:	AMD-fortran-devel < 2.4.0-5
 
 %description AMD-fortran-devel
@@ -206,6 +215,7 @@ Version:	%{amd_ver}
 License:	LGPL v2.1+
 Group:		Development/Libraries
 Requires:	%{name}-AMD-fortran-devel = %{amd_ver}-%{release}
+Provides:	AMD-fortran-static = %{amd_ver}-%{release}
 Obsoletes:	AMD-fortran-static < 2.4.0-5
 
 %description AMD-fortran-static
@@ -220,6 +230,7 @@ Summary(pl.UTF-8):	BTF - permutacja do postaci blokowo trójkątnej
 Version:	%{btf_ver}
 License:	LGPL v2.1+
 Group:		Libraries
+Provides:	BTF = %{btf_ver}-%{release}
 Obsoletes:	BTF < 1.2.0-3
 
 %description BTF
@@ -240,6 +251,7 @@ License:	LGPL v2.1+
 Group:		Development/Libraries
 Requires:	%{name}-BTF = %{btf_ver}-%{release}
 Requires:	%{name}-config = %{suite_ver}-%{release}
+Provides:	BTF-devel = %{btf_ver}-%{release}
 Obsoletes:	BTF-devel < 1.2.0-3
 
 %description BTF-devel
@@ -255,6 +267,7 @@ Version:	%{btf_ver}
 License:	LGPL v2.1+
 Group:		Development/Libraries
 Requires:	%{name}-BTF-devel = %{btf_ver}-%{release}
+Provides:	BTF-static = %{btf_ver}-%{release}
 Obsoletes:	BTF-static < 1.2.0-3
 
 %description BTF-static
@@ -270,6 +283,7 @@ Version:	%{camd_ver}
 License:	LGPL v2.1+
 Group:		Libraries
 Requires:	SuiteSparse-config-libs = %{suite_ver}-%{release}
+Provides:	CAMD = %{camd_ver}-%{release}
 Obsoletes:	CAMD < 2.4.0-4
 
 %description CAMD
@@ -289,6 +303,7 @@ License:	LGPL v2.1+
 Group:		Development/Libraries
 Requires:	%{name}-CAMD = %{camd_ver}-%{release}
 Requires:	SuiteSparse-config-devel = %{suite_ver}-%{release}
+Provides:	CAMD-devel = %{camd_ver}-%{release}
 Obsoletes:	CAMD-devel < 2.4.0-4
 
 %description CAMD-devel
@@ -304,6 +319,7 @@ Version:	%{camd_ver}
 License:	LGPL v2.1+
 Group:		Development/Libraries
 Requires:	%{name}-CAMD-devel = %{camd_ver}-%{release}
+Provides:	CAMD-static = %{camd_ver}-%{release}
 Obsoletes:	CAMD-static < 2.4.0-4
 
 %description CAMD-static
@@ -318,6 +334,7 @@ Summary(pl.UTF-8):	CCOLAMD - przybliżony ograniczony algorytm minimalnego stopn
 Version:	%{ccolamd_ver}
 License:	LGPL v2.1+
 Group:		Libraries
+Provides:	CCOLAMD = %{ccolamd_ver}-%{release}
 Obsoletes:	CCOLAMD < 2.9.0-4
 
 %description CCOLAMD
@@ -348,6 +365,7 @@ License:	LGPL v2.1+
 Group:		Development/Libraries
 Requires:	%{name}-CCOLAMD = %{ccolamd_ver}-%{release}
 Requires:	%{name}-config = %{suite_ver}-%{release}
+Provides:	CCOLAMD-devel = %{ccolamd_ver}-%{release}
 Obsoletes:	CCOLAMD-devel < 2.9.0-4
 
 %description CCOLAMD-devel
@@ -363,6 +381,7 @@ Version:	%{ccolamd_ver}
 License:	LGPL v2.1+
 Group:		Development/Libraries
 Requires:	%{name}-CCOLAMD-devel = %{ccolamd_ver}-%{release}
+Provides:	CCOLAMD-static = %{ccolamd_ver}-%{release}
 Obsoletes:	CCOLAMD-static < 2.9.0-4
 
 %description CCOLAMD-static
@@ -378,6 +397,7 @@ Version:	%{colamd_ver}
 License:	LGPL v2.1+
 Group:		Libraries
 Requires:	%{name}-config-libs = %{suite_ver}-%{release}
+Provides:	COLAMD = %{colamd_ver}-%{release}
 Obsoletes:	COLAMD < 2.9.0-4
 Obsoletes:	colamd < 2.7
 
@@ -413,6 +433,7 @@ License:	LGPL v2.1+
 Group:		Development/Libraries
 Requires:	%{name}-COLAMD = %{colamd_ver}-%{release}
 Requires:	%{name}-config-devel = %{suite_ver}-%{release}
+Provides:	COLAMD-devel = %{colamd_ver}-%{release}
 Obsoletes:	COLAMD-devel < 2.9.0-4
 Obsoletes:	colamd-devel < 2.7
 
@@ -429,6 +450,7 @@ Version:	%{colamd_ver}
 License:	LGPL v2.1+
 Group:		Development/Libraries
 Requires:	%{name}-COLAMD-devel = %{colamd_ver}-%{release}
+Provides:	COLAMD-static = %{colamd_ver}-%{release}
 Obsoletes:	COLAMD-static < 2.9.0-4
 Obsoletes:	colamd-static < 2.7
 
@@ -445,6 +467,7 @@ Version:	%{cholmod_ver}
 License:	GPL v2+ (some parts LGPL v2.1+)
 Group:		Libraries
 Requires:	%{name}-config-libs = %{suite_ver}-%{release}
+Provides:	CHOLMOD = %{cholmod_ver}-%{release}
 Obsoletes:	CHOLMOD < 3.0.1-6
 
 %description CHOLMOD
@@ -472,6 +495,7 @@ Requires:	lapack-devel
 %if %{with metis}
 Requires:	metis-devel >= 5
 %endif
+Provides:	CHOLMOD-devel = %{cholmod_ver}-%{release}
 Obsoletes:	CHOLMOD-devel < 3.0.1-6
 
 %description CHOLMOD-devel
@@ -487,6 +511,7 @@ Version:	%{cholmod_ver}
 License:	GPL v2+ (some parts LGPL v2.1+)
 Group:		Development/Libraries
 Requires:	%{name}-CHOLMOD-devel = %{cholmod_ver}-%{release}
+Provides:	CHOLMOD-static = %{cholmod_ver}-%{release}
 Obsoletes:	CHOLMOD-static < 3.0.1-6
 
 %description CHOLMOD-static
@@ -501,6 +526,7 @@ Summary(pl.UTF-8):	CXSparse - rozszerzona wersja zwięzłego pakietu do macierzy
 Version:	%{cxsparse_ver}
 License:	LGPL v2.1+
 Group:		Libraries
+Provides:	CXSparse = %{cxsparse_ver}-%{release}
 Obsoletes:	CXSparse < 0.1
 
 %description CXSparse
@@ -521,6 +547,7 @@ License:	LGPL v2.1+
 Group:		Development/Libraries
 Requires:	%{name}-CXSparse = %{cxsparse_ver}-%{release}
 Requires:	%{name}-config = %{suite_ver}-%{release}
+Provides:	CXSparse-devel = %{cxsparse_ver}-%{release}
 Obsoletes:	CXSparse-devel < 0.1
 
 %description CXSparse-devel
@@ -536,6 +563,7 @@ Version:	%{cxsparse_ver}
 License:	LGPL v2.1+
 Group:		Development/Libraries
 Requires:	%{name}-CXSparse-devel = %{cxsparse_ver}-%{release}
+Provides:	CXSparse-static = %{cxsparse_ver}-%{release}
 Obsoletes:	CXSparse-static < 0.1
 
 %description CXSparse-static
@@ -554,6 +582,7 @@ Requires:	%{name}-AMD = %{amd_ver}-%{release}
 Requires:	%{name}-BTF = %{btf_ver}-%{release}
 Requires:	%{name}-COLAMD = %{colamd_ver}-%{release}
 Requires:	%{name}-config-libs = %{suite_ver}-%{release}
+Provides:	KLU = %{klu_ver}-%{release}
 Obsoletes:	KLU < 1.3.0-3
 
 %description KLU
@@ -575,6 +604,7 @@ Requires:	%{name}-AMD-devel = %{amd_ver}-%{release}
 Requires:	%{name}-BTF-devel = %{btf_ver}-%{release}
 Requires:	%{name}-COLAMD-devel = %{colamd_ver}-%{release}
 Requires:	%{name}-config-devel = %{suite_ver}-%{release}
+Provides:	KLU-devel = %{klu_ver}-%{release}
 Obsoletes:	KLU-devel < 1.3.0-3
 
 %description KLU-devel
@@ -589,7 +619,8 @@ Summary(pl.UTF-8):	Statyczna biblioteka KLU
 Version:	%{klu_ver}
 License:	LGPL v2.1+
 Group:		Development/Libraries
-Requires:	%{name}-KLU-devel = %{version}-%{release}
+Requires:	%{name}-KLU-devel = %{klu_ver}-%{release}
+Provides:	KLU-static = %{klu_ver}-%{release}
 Obsoletes:	KLU-static < 1.3.0-3
 
 %description KLU-static
@@ -604,6 +635,7 @@ Summary(pl.UTF-8):	LDL - prosty rozkład LDL^T dla macierzy rzadkich
 Version:	%{ldl_ver}
 License:	LGPL v2.1+
 Group:		Libraries
+Provides:	LDL = %{ldl_ver}-%{release}
 Obsoletes:	LDL < 2.2.0-2
 
 %description LDL
@@ -636,6 +668,7 @@ License:	LGPL v2.1+
 Group:		Development/Libraries
 Requires:	%{name}-LDL = %{ldl_ver}-%{release}
 Requires:	%{name}-config = %{suite_ver}-%{release}
+Provides:	LDL-devel = %{ldl_ver}-%{release}
 Obsoletes:	LDL-devel < 2.2.0-2
 
 %description LDL-devel
@@ -651,6 +684,7 @@ Version:	%{ldl_ver}
 License:	LGPL v2.1+
 Group:		Development/Libraries
 Requires:	%{name}-LDL-devel = %{ldl_ver}-%{release}
+Provides:	LDL-static = %{ldl_ver}-%{release}
 Obsoletes:	LDL-static < 2.2.0-2
 
 %description LDL-static
@@ -666,6 +700,7 @@ Version:	%{rbio_ver}
 License:	GPL v2+
 Group:		Libraries
 Requires:	%{name}-config-libs = %{suite_ver}-%{release}
+Provides:	RBio = %{rbio_ver}-%{release}
 Obsoletes:	RBio < 2.2.0-2
 
 %description RBio
@@ -689,6 +724,7 @@ License:	GPL v2+
 Group:		Development/Libraries
 Requires:	%{name}-RBio = %{rbio_ver}-%{release}
 Requires:	%{name}-config-devel = %{suite_ver}-%{release}
+Provides:	RBio-devel = %{rbio_ver}-%{release}
 Obsoletes:	RBio-devel < 2.2.0-2
 
 %description RBio-devel
@@ -704,6 +740,7 @@ Version:	%{rbio_ver}
 License:	GPL v2+
 Group:		Development/Libraries
 Requires:	%{name}-RBio-devel = %{rbio_ver}-%{release}
+Provides:	RBio-static = %{rbio_ver}-%{release}
 Obsoletes:	RBio-static < 2.2.0-2
 
 %description RBio-static
@@ -720,6 +757,7 @@ License:	GPL v2+
 Group:		Libraries
 Requires:	%{name}-CHOLMOD = %{cholmod_ver}-%{release}
 Requires:	%{name}-config-libs = %{suite_ver}-%{release}
+Provides:	SPQR = %{spqr_ver}-%{release}
 Obsoletes:	SPQR < 1.3.3-5
 
 %description SPQR
@@ -751,6 +789,7 @@ Requires:	%{name}-CHOLMOD-devel = %{cholmod_ver}-%{release}
 Requires:	%{name}-SPQR = %{spqr_ver}-%{release}
 Requires:	%{name}-config-devel = %{suite_ver}-%{release}
 Requires:	libstdc++-devel
+Provides:	SPQR-devel = %{spqr_ver}-%{release}
 Obsoletes:	SPQR-devel < 1.3.3-5
 
 %description SPQR-devel
@@ -766,6 +805,7 @@ Version:	%{spqr_ver}
 License:	GPL v2+
 Group:		Development/Libraries
 Requires:	%{name}-SPQR-devel = %{spqr_ver}-%{release}
+Provides:	SPQR-static = %{spqr_ver}-%{release}
 Obsoletes:	SPQR-static < 1.3.3-5
 
 %description SPQR-static
@@ -781,6 +821,7 @@ Version:	%{umfpack_ver}
 License:	GPL v2+
 Group:		Libraries
 Requires:	%{name}-CHOLMOD = %{cholmod_ver}-%{release}
+Provides:	UMFPACK = %{umfpack_ver}-%{release}
 Obsoletes:	UMFPACK < 5.7.0-7
 
 %description UMFPACK
@@ -811,6 +852,7 @@ Group:		Development/Libraries
 Requires:	%{name}-UMFPACK = %{umfpack_ver}-%{release}
 Requires:	%{name}-CHOLMOD-devel = %{cholmod_ver}-%{release}
 Requires:	%{name}-config = %{suite_ver}-%{release}
+Provides:	UMFPACK-devel = %{umfpack_ver}-%{release}
 Obsoletes:	UMFPACK-devel < 5.7.0-7
 
 %description UMFPACK-devel
@@ -826,6 +868,7 @@ Version:	%{umfpack_ver}
 License:	GPL v2+
 Group:		Development/Libraries
 Requires:	%{name}-UMFPACK-devel = %{umfpack_ver}-%{release}
+Provides:	UMFPACK-static = %{umfpack_ver}-%{release}
 Obsoletes:	UMFPACK-static < 5.7.0-7
 
 %description UMFPACK-static
