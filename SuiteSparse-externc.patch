@@ -243,10 +243,10 @@
 +#endif
 +
  #endif
---- SuiteSparse/CHOLMOD/Include/cholmod_gpu.h.orig	2014-03-24 15:11:20.000000000 +0100
-+++ SuiteSparse/CHOLMOD/Include/cholmod_gpu.h	2023-01-07 17:13:58.369206359 +0100
+--- SuiteSparse/CHOLMOD/Include/cholmod_gpu.h.orig	2018-12-23 03:18:58.000000000 +0100
++++ SuiteSparse/CHOLMOD/Include/cholmod_gpu.h	2023-01-16 17:36:07.886049654 +0100
 @@ -23,6 +23,11 @@
- #include <fenv.h>
+ #endif
  #endif
  
 +/* make it easy for C++ programs to include CHOLMOD */
@@ -528,20 +528,20 @@
  #endif
  
  /* ========================================================================== */
---- SuiteSparse/SPQR/Include/SuiteSparseQR.hpp.orig	2023-01-08 20:55:20.329182842 +0100
-+++ SuiteSparse/SPQR/Include/SuiteSparseQR.hpp	2023-01-08 20:56:01.678958831 +0100
-@@ -11,11 +11,8 @@
- // include files
- // -----------------------------------------------------------------------------
- 
+--- SuiteSparse/SPQR/Include/SuiteSparseQR.hpp.orig	2023-01-16 17:36:42.955859665 +0100
++++ SuiteSparse/SPQR/Include/SuiteSparseQR.hpp	2023-01-16 17:37:05.512404132 +0100
+@@ -15,11 +15,8 @@
+ #include <cublas_v2.h>
+ #endif
+ #define SUITESPARSE_GPU_EXTERN_ON
 -extern "C"
 -{
  #include "SuiteSparseQR_definitions.h"
  #include "cholmod.h"
 -}
+ #undef SUITESPARSE_GPU_EXTERN_ON
  
  // =============================================================================
- // === spqr_gpu ================================================================
 --- SuiteSparse/SPQR/Include/spqr.hpp.orig	2014-03-19 20:39:23.000000000 +0100
 +++ SuiteSparse/SPQR/Include/spqr.hpp	2023-01-07 21:29:30.076147372 +0100
 @@ -1015,9 +1015,7 @@ inline Long spqr_mult (Long a, Long b, i

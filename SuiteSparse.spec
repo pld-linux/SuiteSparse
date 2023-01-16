@@ -4,34 +4,35 @@
 %bcond_without	metis		# partition support (using metis lib)
 
 # main package version
-%define		suite_ver	5.2.0
+%define		suite_ver	5.4.0
 # see */Include/*.h /VER(SION)?_CODE, C*Sparse/Include/cs.h /CS_VER
 %define		amd_ver		2.4.6
 %define		btf_ver		1.2.6
 %define		camd_ver	2.4.6
 %define		ccolamd_ver	2.9.6
 %define		colamd_ver	2.9.6
-%define		cholmod_ver	3.0.12
+%define		cholmod_ver	3.0.13
 %define		csparse_ver	3.2.0
 %define		cxsparse_ver	3.1.9
 %define		klu_ver		1.3.9
 %define		ldl_ver		2.2.6
 %define		rbio_ver	2.2.6
-%define		spqr_ver	2.0.8
-%define		umfpack_ver	5.7.6
+%define		spqr_ver	2.0.9
+%define		umfpack_ver	5.7.8
 %define		gpuruntime_ver	1.0.5
 %define		gpuqrengine_ver	1.0.5
-# GraphBLAS version 2.0.1, but disabled here, newer version is built from GraphBLAS.spec
+# GraphBLAS version 2.2.2, but disabled here, newer version is built from GraphBLAS.spec
+# Mongoose version 2.0.3, but disabled here, newer version is built from SuiteSparse-Mongoose.spec
 
 Summary:	A Suite of Sparse matrix packages
 Summary(pl.UTF-8):	Zbiór pakietów do operacji na macierzach rzadkich
 Name:		SuiteSparse
 Version:	%{suite_ver}
-Release:	4
+Release:	5
 License:	LGPL v2.1+, GPL v2+
 Group:		Libraries
 Source0:	https://people.engr.tamu.edu/davis/SuiteSparse/%{name}-%{version}.tar.gz
-# Source0-md5:	8e625539dbeed061cc62fbdfed9be7cf
+# Source0-md5:	4a6d4e74fc44c503f52996ae95cad03a
 Patch0:		%{name}-config.patch
 Patch1:		%{name}-amdf77.patch
 Patch2:		%{name}-externc.patch
