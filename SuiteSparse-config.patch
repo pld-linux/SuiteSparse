@@ -55,13 +55,13 @@
  I = -I../Include
  
  LDLIBS += -lm
---- SuiteSparse/Makefile.orig	2017-12-22 23:45:29.000000000 +0100
-+++ SuiteSparse/Makefile	2023-01-12 20:49:33.288787014 +0100
+--- SuiteSparse/Makefile.orig	2018-01-08 18:05:18.000000000 +0100
++++ SuiteSparse/Makefile	2023-01-16 17:05:17.219408909 +0100
 @@ -12,7 +12,6 @@ include SuiteSparse_config/SuiteSparse_c
  # Compile the default rules for each package
  go: metis
  	( cd SuiteSparse_config && $(MAKE) )
--	( cd GraphBLAS && $(MAKE) )
+-	( cd GraphBLAS && $(MAKE) CMAKE_OPTIONS='$(CMAKE_OPTIONS)' )
  	( cd AMD && $(MAKE) )
  	( cd BTF && $(MAKE) )
  	( cd CAMD && $(MAKE) )
@@ -69,7 +69,7 @@
  # (note that CSparse is not installed; CXSparse is installed instead)
  install: metisinstall
  	( cd SuiteSparse_config && $(MAKE) install )
--	( cd GraphBLAS && $(MAKE) install )
+-	( cd GraphBLAS && $(MAKE) CMAKE_OPTIONS='$(CMAKE_OPTIONS)' install )
  	( cd AMD && $(MAKE) install )
  	( cd BTF && $(MAKE) install )
  	( cd CAMD && $(MAKE) install )
@@ -77,7 +77,7 @@
  # static library
  library: metis
  	( cd SuiteSparse_config && $(MAKE) )
--	( cd GraphBLAS && $(MAKE) library )
+-	( cd GraphBLAS && $(MAKE) CMAKE_OPTIONS='$(CMAKE_OPTIONS)' library )
  	( cd AMD && $(MAKE) library )
  	( cd BTF && $(MAKE) library )
  	( cd CAMD && $(MAKE) library )
