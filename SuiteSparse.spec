@@ -42,6 +42,7 @@ URL:		http://suitesparse.com/
 BuildRequires:	blas-devel
 BuildRequires:	gcc-fortran
 BuildRequires:	lapack-devel
+BuildRequires:	libgomp-devel
 BuildRequires:	libstdc++-devel
 BuildRequires:	libtool >= 2:1.5
 %if %{with metis}
