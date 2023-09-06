@@ -937,6 +937,9 @@ rm -rf $RPM_BUILD_ROOT
 %post	AMD -p /sbin/ldconfig
 %postun	AMD -p /sbin/ldconfig
 
+%post	AMD-fortran -p /sbin/ldconfig
+%postun	AMD-fortran -p /sbin/ldconfig
+
 %post	BTF -p /sbin/ldconfig
 %postun	BTF -p /sbin/ldconfig
 
