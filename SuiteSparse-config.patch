@@ -1,6 +1,6 @@
---- SuiteSparse-5.5.0/SuiteSparse_config/SuiteSparse_config.mk.orig	2019-10-21 04:34:43.000000000 +0200
-+++ SuiteSparse-5.5.0/SuiteSparse_config/SuiteSparse_config.mk	2023-09-06 18:15:35.991275820 +0200
-@@ -137,7 +137,7 @@ SUITESPARSE_VERSION = 5.5.0
+--- SuiteSparse-5.7.2/SuiteSparse_config/SuiteSparse_config.mk.orig	2020-04-08 22:42:59.000000000 +0200
++++ SuiteSparse-5.7.2/SuiteSparse_config/SuiteSparse_config.mk	2023-09-07 20:41:07.502570836 +0200
+@@ -137,7 +137,7 @@ SUITESPARSE_VERSION = 5.7.2
  
      # The CF macro is used by SuiteSparse Makefiles as a combination of
      # CFLAGS, CPPFLAGS, TARGET_ARCH, and system-dependent settings.
@@ -9,16 +9,16 @@
  
      #---------------------------------------------------------------------------
      # code formatting (for Tcov on Linux only)
-@@ -175,7 +175,7 @@ SUITESPARSE_VERSION = 5.5.0
-             LAPACK =
+@@ -174,7 +174,7 @@ SUITESPARSE_VERSION = 5.7.2
          else
-             # use the OpenBLAS at http://www.openblas.net (CAN BE VERY SLOW)
--            BLAS = -lopenblas
-+            BLAS = -lblas
+             # use the OpenBLAS at http://www.openblas.net (CAN BE VERY SLOW;
+             # CHOLMOD can be slowed down by a factor of 100x in extreme cases)
+-            BLAS ?= -lopenblas
++            BLAS ?= -lblas
+             LAPACK ?= -llapack
          endif
      endif
- 
-@@ -200,7 +200,7 @@ SUITESPARSE_VERSION = 5.5.0
+@@ -200,7 +200,7 @@ SUITESPARSE_VERSION = 5.7.2
      # A Fortran compiler is optional.  Only required for the optional Fortran
      # interfaces to AMD and UMFPACK.  Not needed by 'make' or 'make install'
      F77 ?= gfortran
@@ -27,7 +27,7 @@
  
      #---------------------------------------------------------------------------
      # NVIDIA CUDA configuration for CHOLMOD and SPQR
-@@ -358,7 +358,7 @@ SUITESPARSE_VERSION = 5.5.0
+@@ -358,7 +358,7 @@ SUITESPARSE_VERSION = 5.7.2
  
      ifeq ($(UNAME),Linux)
          # add the realtime library, librt, and SuiteSparse/lib
@@ -55,8 +55,8 @@
  I = -I../Include
  
  LDLIBS += -lm
---- SuiteSparse-5.5.0/Makefile.orig	2019-10-21 04:34:43.000000000 +0200
-+++ SuiteSparse-5.5.0/Makefile	2023-09-06 18:21:24.732719858 +0200
+--- SuiteSparse-5.7.2/Makefile.orig	2020-04-08 22:42:59.000000000 +0200
++++ SuiteSparse-5.7.2/Makefile	2023-09-07 20:42:22.222166045 +0200
 @@ -12,7 +12,6 @@ include SuiteSparse_config/SuiteSparse_c
  # Compile the default rules for each package
  go: metis
@@ -88,7 +88,7 @@
 -	( cd GraphBLAS && $(MAKE) JOBS=$(JOBS) CMAKE_OPTIONS='$(CMAKE_OPTIONS)' install )
  #	( cd PIRO_BAND && $(MAKE) install )
  #	( cd SKYLINE_SVD && $(MAKE) install )
- 	$(CP) README.txt $(INSTALL_DOC)/SuiteSparse_README.txt
+ 	$(CP) README.md $(INSTALL_DOC)/SuiteSparse_README.md
 @@ -116,7 +112,6 @@ endif
  # the static library
  library: metis
