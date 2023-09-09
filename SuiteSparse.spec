@@ -4,7 +4,7 @@
 %bcond_without	metis		# partition support (using metis lib)
 
 # main package version
-%define		suite_ver	5.7.2
+%define		suite_ver	5.13.0
 # see */Include/*.h /VER(SION)?_CODE, C*Sparse/Include/cs.h /CS_VER
 %define		amd_ver		2.4.6
 %define		btf_ver		1.2.6
@@ -17,23 +17,24 @@
 %define		klu_ver		1.3.9
 %define		ldl_ver		2.2.6
 %define		rbio_ver	2.2.6
+%define		sliplu_ver	1.0.2
 %define		spqr_ver	2.0.9
 %define		umfpack_ver	5.7.9
 %define		gpuruntime_ver	1.0.5
 %define		gpuqrengine_ver	1.0.5
-# GraphBLAS version 3.2.2, but disabled here, newer version is built from GraphBLAS.spec
+# GraphBLAS version 7.2.0, but disabled here, newer version is built from GraphBLAS.spec
 # Mongoose version 2.0.4, but disabled here, the same version is built from SuiteSparse-Mongoose.spec
 
 Summary:	A Suite of Sparse matrix packages
 Summary(pl.UTF-8):	Zbiór pakietów do operacji na macierzach rzadkich
 Name:		SuiteSparse
 Version:	%{suite_ver}
-Release:	7
+Release:	8
 License:	LGPL v2.1+, GPL v2+
 Group:		Libraries
 #Source0Download: https://github.com/DrTimothyAldenDavis/SuiteSparse/releases
 Source0:	https://github.com/DrTimothyAldenDavis/SuiteSparse/archive/v%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	7dc408bd99f825ef75fca0dda708f95d
+# Source0-md5:	e9e7bc594b77ae4b58d943cdc286d679
 Patch0:		%{name}-config.patch
 Patch1:		%{name}-amdf77.patch
 Patch2:		%{name}-externc.patch
@@ -41,6 +42,7 @@ Patch3:		%{name}-ILP32.patch
 URL:		http://suitesparse.com/
 BuildRequires:	blas-devel
 BuildRequires:	gcc-fortran
+BuildRequires:	gmp-devel
 BuildRequires:	lapack-devel
 BuildRequires:	libgomp-devel
 BuildRequires:	libstdc++-devel
@@ -48,6 +50,7 @@ BuildRequires:	libtool >= 2:1.5
 %if %{with metis}
 BuildRequires:	metis-devel >= 5
 %endif
+BuildRequires:	mpfr-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -752,6 +755,57 @@ Static RBio library.
 %description RBio-static -l pl.UTF-8
 Statyczna biblioteka RBio.
 
+%package SLIP_LU
+Summary:	SLIP_LU: Sparse Left-looking Integer-Preserving LU factorization
+Summary(pl.UTF-8):	SLIP_LU - lewostronny rozkład LU dla macierzy rzadkich zachowujący liczby całkowite
+Version:	%{sliplu_ver}
+License:	LGPL v3+ or GPL v2+
+Group:		Libraries
+Requires:	%{name}-AMD = %{amd_ver}-%{release}
+Requires:	%{name}-COLAMD = %{colamd_ver}-%{release}
+Requires:	%{name}-config-libs = %{suite_ver}-%{release}
+
+%description SLIP_LU
+SLIP_LU is software package used to solve a sparse systems of linear
+equations exactly using the Sparse Left-looking Integer-Preserving LU
+factorization.
+
+%description SLIP_LU -l pl.UTF-8
+SLIP_LU to pakiet służący do dokładnego rozwiązywania rzadkich układów
+równań liniowych przy użyciu lewostronnego rzadkiego rozkładu LU
+zachowującego liczby całkowite.
+
+%package SLIP_LU-devel
+Summary:	Header file for SLIP_LU library
+Summary(pl.UTF-8):	Plik nagłówkowy biblioteki SLIP_LU
+Version:	%{sliplu_ver}
+License:	LGPL v3+ or GPL v2+
+Group:		Development/Libraries
+Requires:	%{name}-SLIP_LU = %{sliplu_ver}-%{release}
+Requires:	%{name}-config-devel = %{suite_ver}-%{release}
+Requires:	gmp-devel
+Requires:	mpfr-devel
+
+%description SLIP_LU-devel
+Header file for SLIP_LU library.
+
+%description SLIP_LU-devel -l pl.UTF-8
+Plik nagłówkowy biblioteki SLIP_LU.
+
+%package SLIP_LU-static
+Summary:	Static SLIP_LU library
+Summary(pl.UTF-8):	Statyczna biblioteka SLIP_LU
+Version:	%{sliplu_ver}
+License:	LGPL v3+ or GPL v2+
+Group:		Development/Libraries
+Requires:	%{name}-SLIP_LU-devel = %{sliplu_ver}-%{release}
+
+%description SLIP_LU-static
+Static SLIP_LU library.
+
+%description SLIP_LU-static -l pl.UTF-8
+Statyczna biblioteka SLIP_LU.
+
 %package SPQR
 Summary:	SuiteSparseQR: multithreaded multifrontal sparse QR factorization
 Summary(pl.UTF-8):	SuiteSparseQR - wielowątkowy, wielofrontalny rozkład QR dla macierzy rzadkich
@@ -967,6 +1021,9 @@ rm -rf $RPM_BUILD_ROOT
 %post	RBio -p /sbin/ldconfig
 %postun	RBio -p /sbin/ldconfig
 
+%post	SLIP_LU -p /sbin/ldconfig
+%postun	SLIP_LU -p /sbin/ldconfig
+
 %post	SPQR -p /sbin/ldconfig
 %postun	SPQR -p /sbin/ldconfig
 
@@ -1161,6 +1218,21 @@ rm -rf $RPM_BUILD_ROOT
 %files RBio-static
 %defattr(644,root,root,755)
 %{_libdir}/librbio.a
+
+%files SLIP_LU
+%defattr(644,root,root,755)
+%doc SLIP_LU/README.md SLIP_LU/License/license.txt
+%attr(755,root,root) %{_libdir}/libsliplu.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libsliplu.so.1
+
+%files SLIP_LU-devel
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/libsliplu.so
+%{_includedir}/suitesparse/SLIP_LU.h
+
+%files SLIP_LU-static
+%defattr(644,root,root,755)
+%{_libdir}/libsliplu.a
 
 %files SPQR
 %defattr(644,root,root,755)

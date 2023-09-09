@@ -1,6 +1,6 @@
---- SuiteSparse-5.7.2/SuiteSparse_config/SuiteSparse_config.mk.orig	2020-04-08 22:42:59.000000000 +0200
-+++ SuiteSparse-5.7.2/SuiteSparse_config/SuiteSparse_config.mk	2023-09-07 20:41:07.502570836 +0200
-@@ -137,7 +137,7 @@ SUITESPARSE_VERSION = 5.7.2
+--- SuiteSparse-5.13.0/SuiteSparse_config/SuiteSparse_config.mk.orig	2022-08-31 18:14:11.000000000 +0200
++++ SuiteSparse-5.13.0/SuiteSparse_config/SuiteSparse_config.mk	2023-09-09 18:37:07.316739831 +0200
+@@ -154,7 +154,7 @@ SUITESPARSE_VERSION = 5.13.0
  
      # The CF macro is used by SuiteSparse Makefiles as a combination of
      # CFLAGS, CPPFLAGS, TARGET_ARCH, and system-dependent settings.
@@ -9,16 +9,7 @@
  
      #---------------------------------------------------------------------------
      # code formatting (for Tcov on Linux only)
-@@ -174,7 +174,7 @@ SUITESPARSE_VERSION = 5.7.2
-         else
-             # use the OpenBLAS at http://www.openblas.net (CAN BE VERY SLOW;
-             # CHOLMOD can be slowed down by a factor of 100x in extreme cases)
--            BLAS ?= -lopenblas
-+            BLAS ?= -lblas
-             LAPACK ?= -llapack
-         endif
-     endif
-@@ -200,7 +200,7 @@ SUITESPARSE_VERSION = 5.7.2
+@@ -217,7 +217,7 @@ SUITESPARSE_VERSION = 5.13.0
      # A Fortran compiler is optional.  Only required for the optional Fortran
      # interfaces to AMD and UMFPACK.  Not needed by 'make' or 'make install'
      F77 ?= gfortran
@@ -27,15 +18,23 @@
  
      #---------------------------------------------------------------------------
      # NVIDIA CUDA configuration for CHOLMOD and SPQR
-@@ -358,7 +358,7 @@ SUITESPARSE_VERSION = 5.7.2
- 
+@@ -349,7 +349,6 @@ SUITESPARSE_VERSION = 5.13.0
      ifeq ($(UNAME),Linux)
-         # add the realtime library, librt, and SuiteSparse/lib
--        LDLIBS += -lrt -Wl,-rpath=$(INSTALL_LIB)
-+        LDLIBS += -lrt
+         # add the posix realtime extensions library: librt
+         LDLIBS += -lrt
+-        LDFLAGS += -Wl,-rpath=$(INSTALL_LIB)
      endif
  
      #---------------------------------------------------------------------------
+@@ -469,7 +468,7 @@ else
+         SO_MAIN   = $(LIBRARY).so.$(SO_VERSION)
+         SO_TARGET = $(LIBRARY).so.$(VERSION)
+         SO_OPTS  += -shared -Wl,-soname -Wl,$(SO_MAIN) -Wl,--no-undefined \
+-                     -Wl,-rpath,'$$ORIGIN' -Wl,-z,origin
++
+         # Use rpath ORIGIN so that Linux/Unix *.so files can be moved without modification:
+         SO_INSTALL_NAME = echo
+     endif
 --- SuiteSparse/CSparse/Lib/Makefile.orig	2017-12-23 20:00:31.000000000 +0100
 +++ SuiteSparse/CSparse/Lib/Makefile	2023-01-13 16:42:59.747528205 +0100
 @@ -15,7 +15,7 @@
@@ -55,41 +54,34 @@
  I = -I../Include
  
  LDLIBS += -lm
---- SuiteSparse-5.7.2/Makefile.orig	2020-04-08 22:42:59.000000000 +0200
-+++ SuiteSparse-5.7.2/Makefile	2023-09-07 20:42:22.222166045 +0200
-@@ -12,7 +12,6 @@ include SuiteSparse_config/SuiteSparse_c
- # Compile the default rules for each package
+--- SuiteSparse-5.13.0/Makefile.orig	2022-08-31 18:14:11.000000000 +0200
++++ SuiteSparse-5.13.0/Makefile	2023-09-09 18:42:15.215071803 +0200
+@@ -16,7 +16,6 @@ include SuiteSparse_config/SuiteSparse_c
+ # installs all libraries SuiteSparse/lib.
  go: metis
  	( cd SuiteSparse_config && $(MAKE) )
--	( cd Mongoose  && $(MAKE) CMAKE_OPTIONS='$(CMAKE_OPTIONS)' )
+-	( cd Mongoose && $(MAKE) CMAKE_OPTIONS='$(CMAKE_OPTIONS)' )
  	( cd AMD && $(MAKE) )
  	( cd BTF && $(MAKE) )
  	( cd CAMD && $(MAKE) )
-@@ -30,7 +29,6 @@ ifneq ($(GPU_CONFIG),)
+@@ -34,7 +33,6 @@ ifneq ($(GPU_CONFIG),)
  	( cd GPUQREngine && $(MAKE) )
  endif
  	( cd SPQR && $(MAKE) )
 -	( cd GraphBLAS && $(MAKE) JOBS=$(JOBS) CMAKE_OPTIONS='$(CMAKE_OPTIONS)' )
+ 	( cd SLIP_LU && $(MAKE) )
  #	( cd PIRO_BAND && $(MAKE) )
  #	( cd SKYLINE_SVD && $(MAKE) )
- 
-@@ -38,7 +36,6 @@ endif
+@@ -44,7 +42,7 @@ endif
+ #       sudo make install INSTALL=/usr/local
+ # See SuiteSparse/README.md for more details.
  # (note that CSparse is not installed; CXSparse is installed instead)
- install: metisinstall
+-install: metisinstall gbinstall moninstall
++install: metisinstall
  	( cd SuiteSparse_config && $(MAKE) install )
--	( cd Mongoose  && $(MAKE) CMAKE_OPTIONS='$(CMAKE_OPTIONS)' install )
+ 	# ( cd Mongoose  && $(MAKE) CMAKE_OPTIONS='$(CMAKE_OPTIONS)' install )
  	( cd AMD && $(MAKE) install )
- 	( cd BTF && $(MAKE) install )
- 	( cd CAMD && $(MAKE) install )
-@@ -55,7 +52,6 @@ ifneq (,$(GPU_CONFIG))
- 	( cd GPUQREngine && $(MAKE) install )
- endif
- 	( cd SPQR && $(MAKE) install )
--	( cd GraphBLAS && $(MAKE) JOBS=$(JOBS) CMAKE_OPTIONS='$(CMAKE_OPTIONS)' install )
- #	( cd PIRO_BAND && $(MAKE) install )
- #	( cd SKYLINE_SVD && $(MAKE) install )
- 	$(CP) README.md $(INSTALL_DOC)/SuiteSparse_README.md
-@@ -116,7 +112,6 @@ endif
+@@ -126,7 +124,6 @@ endif
  # the static library
  library: metis
  	( cd SuiteSparse_config && $(MAKE) )
@@ -97,15 +89,15 @@
  	( cd AMD && $(MAKE) library )
  	( cd BTF && $(MAKE) library )
  	( cd CAMD && $(MAKE) library )
-@@ -134,7 +129,6 @@ ifneq (,$(GPU_CONFIG))
+@@ -144,7 +141,6 @@ ifneq (,$(GPU_CONFIG))
  	( cd GPUQREngine && $(MAKE) library )
  endif
  	( cd SPQR && $(MAKE) library )
 -	( cd GraphBLAS && $(MAKE) JOBS=$(JOBS) CMAKE_OPTIONS='$(CMAKE_OPTIONS)' library )
+ 	( cd SLIP_LU && $(MAKE) library )
  #	( cd PIRO_BAND && $(MAKE) library )
  #	( cd SKYLINE_SVD && $(MAKE) library )
- 
-@@ -143,7 +137,6 @@ endif
+@@ -154,7 +150,6 @@ endif
  # both the dynamic and static libraries.
  static: metis
  	( cd SuiteSparse_config && $(MAKE) static )
@@ -113,15 +105,15 @@
  	( cd AMD && $(MAKE) static )
  	( cd BTF && $(MAKE) static )
  	( cd CAMD && $(MAKE) static )
-@@ -161,7 +154,6 @@ ifneq (,$(GPU_CONFIG))
+@@ -172,7 +167,6 @@ ifneq (,$(GPU_CONFIG))
  	( cd GPUQREngine && $(MAKE) static )
  endif
  	( cd SPQR && $(MAKE) static )
 -	( cd GraphBLAS && $(MAKE) JOBS=$(JOBS) CMAKE_OPTIONS='$(CMAKE_OPTIONS)' static )
+ 	( cd SLIP_LU && $(MAKE) static )
  #	( cd PIRO_BAND && $(MAKE) static )
  #	( cd SKYLINE_SVD && $(MAKE) static )
- 
-@@ -219,8 +211,6 @@ clean:
+@@ -233,8 +227,6 @@ clean:
  
  # Create the PDF documentation
  docs:
