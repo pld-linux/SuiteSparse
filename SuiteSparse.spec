@@ -936,11 +936,11 @@ Statyczna biblioteka UMFPACK.
 
 %prep
 %setup -q
-%patch0 -p1
-%patch1 -p1
-%patch2 -p1
+%patch -P0 -p1
+%patch -P1 -p1
+%patch -P2 -p1
 %ifnarch %{x8664} aarch64 alpha mips64 ppc64 s390x sparc64
-%patch3 -p1
+%patch -P3 -p1
 %endif
 
 %build
