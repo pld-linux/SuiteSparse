@@ -1,39 +1,65 @@
---- SuiteSparse/AMD/Lib/Makefile.orig	2016-05-04 20:01:13.000000000 +0200
-+++ SuiteSparse/AMD/Lib/Makefile	2023-01-11 21:43:51.689203711 +0100
-@@ -52,7 +52,7 @@ amd_l_%.o: ../Source/amd_%.c $(INC)
- # Create the static library (C versions only)
+--- SuiteSparse-6.0.1/AMD/CMakeLists.txt.orig	2022-11-14 01:04:25.000000000 +0100
++++ SuiteSparse-6.0.1/AMD/CMakeLists.txt	2025-06-29 11:32:12.364272842 +0200
+@@ -63,9 +63,11 @@ include_directories ( Source Include ${S
+ # dynamic amd library properties
  #-------------------------------------------------------------------------------
  
--static: $(AR_TARGET)
-+static: $(AR_TARGET) libamdf77.a
+-file ( GLOB AMD_SOURCES "Source/*.c" "Source/*.f" )
++file ( GLOB AMD_SOURCES "Source/*.c" )
++file ( GLOB AMDF77_SOURCES "Source/*.f" )
  
- $(AR_TARGET): $(OBJ)
- 	$(ARCHIVE) $@ $^
-@@ -81,7 +81,7 @@ libamdf77.a: $(AMDF77)
- #-------------------------------------------------------------------------------
+ add_library ( amd SHARED ${AMD_SOURCES} )
++add_library ( amdf77 SHARED ${AMDF77_SOURCES} )
  
- # install AMD
--install: $(AR_TARGET) $(INSTALL_LIB)/$(SO_TARGET)
-+install: $(AR_TARGET) libamdf77.a $(INSTALL_LIB)/$(SO_TARGET) $(INSTALL_LIB)/libamdf77.so.$(VERSION)
+ set_target_properties ( amd PROPERTIES
+     VERSION ${AMD_VERSION_MAJOR}.${AMD_VERSION_MINOR}.${AMD_VERSION_SUB}
+@@ -73,18 +75,29 @@ set_target_properties ( amd PROPERTIES
+     SOVERSION ${AMD_VERSION_MAJOR}
+     PUBLIC_HEADER "Include/amd.h" )
  
- $(INSTALL_LIB)/$(SO_TARGET): $(OBJ)
- 	@mkdir -p $(INSTALL_LIB)
-@@ -98,6 +98,18 @@ $(INSTALL_LIB)/$(SO_TARGET): $(OBJ)
- 	chmod 644 $(INSTALL_DOC)/AMD_UserGuide.pdf
- 	chmod 644 $(INSTALL_DOC)/AMD_README.txt
- 
-+$(INSTALL_LIB)/libamdf77.so.$(VERSION): $(AMD_F77)
-+	@mkdir -p $(INSTALL_LIB)
-+	@mkdir -p $(INSTALL_INCLUDE)
-+	@mkdir -p $(INSTALL_DOC)
-+	$(F77) $(SO_OPTS) $^ -o $@ -lm
-+	( cd $(INSTALL_LIB) ; ln -sf libamdf77.so.$(VERSION) libamdf77.so )
-+	( cd $(INSTALL_LIB) ; ln -sf libamdf77.so.$(VERSION) libamdf77.so.$(SO_VERSION) )
-+	$(CP) ../Include/amd.h $(INSTALL_INCLUDE)
-+	$(CP) ../Doc/AMD_UserGuide.pdf $(INSTALL_DOC)
-+	$(CP) ../README.txt $(INSTALL_DOC)/AMD_README.txt
-+	chmod 755 $(INSTALL_LIB)/libamdf77.so.$(VERSION)
++set_target_properties ( amdf77 PROPERTIES
++    VERSION ${AMD_VERSION_MAJOR}.${AMD_VERSION_MINOR}.${AMD_VERSION_SUB}
++    SOVERSION ${AMD_VERSION_MAJOR}
++    )
 +
- # uninstall AMD
- uninstall:
- 	$(RM) $(INSTALL_LIB)/$(SO_TARGET)
+ #-------------------------------------------------------------------------------
+ # static amd library properties
+ #-------------------------------------------------------------------------------
+ 
+ if ( NOT NSTATIC )
+ add_library ( amd_static STATIC ${AMD_SOURCES} )
++add_library ( amdf77_static STATIC ${AMDF77_SOURCES} )
+ 
+ set_target_properties ( amd_static PROPERTIES
+     VERSION ${AMD_VERSION_MAJOR}.${AMD_VERSION_MINOR}.${AMD_VERSION_SUB}
+     C_STANDARD_REQUIRED 11
+     OUTPUT_NAME amd
+     SOVERSION ${AMD_VERSION_MAJOR} )
++
++set_target_properties ( amdf77_static PROPERTIES
++    VERSION ${AMD_VERSION_MAJOR}.${AMD_VERSION_MINOR}.${AMD_VERSION_SUB}
++    OUTPUT_NAME amdf77
++    SOVERSION ${AMD_VERSION_MAJOR} )
+ endif ( )
+ 
+ #-------------------------------------------------------------------------------
+@@ -116,6 +129,8 @@ if ( GLOBAL_INSTALL )
+     install ( TARGETS amd
+         LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR}
+         PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} )
++    install ( TARGETS amdf77
++        LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR} )
+     install ( FILES ${CMAKE_SOURCE_DIR}/cmake_modules/FindAMD.cmake
+         DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/SuiteSparse 
+         COMPONENT Development )
+@@ -123,6 +138,10 @@ if ( GLOBAL_INSTALL )
+     install ( TARGETS amd_static
+         ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR} )
+     endif ( )
++    if ( NOT NSTATIC )
++    install ( TARGETS amdf77_static
++        ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR} )
++    endif ( )
+ endif ( )
+ 
+ if ( INSIDE_SUITESPARSE )

@@ -1,56 +1,60 @@
-# TODO: GPU_CONFIG (CUDA) support, TBB
+# TODO: finish CUDA support (ENABLE_CUDA=ON), TBB
 #
 # Conditional build:
-%bcond_without	metis		# partition support (using metis lib)
+%bcond_with	cuda		# CUDA support
+%bcond_without	metis		# partition support (using internal modified metis lib)
+%bcond_with	system_metis	# system metis library (not supported, requires modifications)
+%bcond_without	static_libs	# static libraries
 
 # main package version
-%define		suite_ver	5.13.0
-# see */Include/*.h /VER(SION)?_CODE, C*Sparse/Include/cs.h /CS_VER
-%define		amd_ver		2.4.6
-%define		btf_ver		1.2.6
-%define		camd_ver	2.4.6
-%define		ccolamd_ver	2.9.6
-%define		colamd_ver	2.9.6
-%define		cholmod_ver	3.0.14
-%define		csparse_ver	3.2.0
-%define		cxsparse_ver	3.2.0
-%define		klu_ver		1.3.9
-%define		ldl_ver		2.2.6
-%define		rbio_ver	2.2.6
-%define		sliplu_ver	1.0.2
-%define		spqr_ver	2.0.9
-%define		umfpack_ver	5.7.9
-%define		gpuruntime_ver	1.0.5
-%define		gpuqrengine_ver	1.0.5
-# GraphBLAS version 7.2.0, but disabled here, newer version is built from GraphBLAS.spec
-# Mongoose version 2.0.4, but disabled here, the same version is built from SuiteSparse-Mongoose.spec
+%define		suite_ver	6.0.1
+# see */Include/*.h /VER(SION)?_CODE, C*Sparse/Include/cs.h /CS_VER Mongoose/Include/Mongoose_Version.hpp /Mongoose_VERSION_
+%define		amd_ver		3.0.0
+%define		btf_ver		2.0.0
+%define		camd_ver	3.0.0
+%define		ccolamd_ver	3.0.0
+%define		colamd_ver	3.0.0
+%define		cholmod_ver	4.0.1
+%define		csparse_ver	4.0.0
+%define		cxsparse_ver	4.0.0
+%define		klu_ver		2.0.0
+%define		ldl_ver		3.0.0
+%define		rbio_ver	3.0.0
+%define		spex_ver	2.0.0
+%define		spqr_ver	3.0.1
+%define		umfpack_ver	6.0.1
+%define		gpuruntime_ver	2.0.0
+%define		gpuqrengine_ver	2.0.0
+%define		mongoose_ver	3.0.0
+# GraphBLAS version 7.3.2, but disabled here, newer version is built from GraphBLAS.spec
 
 Summary:	A Suite of Sparse matrix packages
 Summary(pl.UTF-8):	Zbiór pakietów do operacji na macierzach rzadkich
 Name:		SuiteSparse
 Version:	%{suite_ver}
-Release:	8
+Release:	1
 License:	LGPL v2.1+, GPL v2+
 Group:		Libraries
 #Source0Download: https://github.com/DrTimothyAldenDavis/SuiteSparse/releases
 Source0:	https://github.com/DrTimothyAldenDavis/SuiteSparse/archive/v%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	e9e7bc594b77ae4b58d943cdc286d679
-Patch0:		%{name}-config.patch
+# Source0-md5:	3bb660ac217791c7e9fabac944c8ee07
+Patch0:		%{name}-link.patch
 Patch1:		%{name}-amdf77.patch
 Patch2:		%{name}-externc.patch
 Patch3:		%{name}-ILP32.patch
 URL:		http://suitesparse.com/
 BuildRequires:	blas-devel
+BuildRequires:	cmake >= 3.22
 BuildRequires:	gcc-fortran
 BuildRequires:	gmp-devel
 BuildRequires:	lapack-devel
 BuildRequires:	libgomp-devel
-BuildRequires:	libstdc++-devel
-BuildRequires:	libtool >= 2:1.5
-%if %{with metis}
+BuildRequires:	libstdc++-devel >= 6:7
+%if %{with system_metis}
 BuildRequires:	metis-devel >= 5
 %endif
 BuildRequires:	mpfr-devel
+BuildRequires:	rpmbuild(macros) >= 1.605
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -498,7 +502,7 @@ Requires:	%{name}-CHOLMOD = %{cholmod_ver}-%{release}
 Requires:	%{name}-COLAMD-devel = %{colamd_ver}-%{release}
 Requires:	blas-devel
 Requires:	lapack-devel
-%if %{with metis}
+%if %{with system_metis}
 Requires:	metis-devel >= 5
 %endif
 Provides:	CHOLMOD-devel = %{cholmod_ver}-%{release}
@@ -635,6 +639,52 @@ Static KLU library.
 %description KLU-static -l pl.UTF-8
 Statyczna biblioteka KLU.
 
+%package KLU_CHOLMOD
+Summary:	KLU interface to CHOLMOD
+Summary(pl.UTF-8):	Interfejs KLU do CHOLMOD
+Version:	%{klu_ver}
+License:	LGPL v2.1+
+Group:		Libraries
+Requires:	%{name}-KLU = %{klu_ver}-%{release}
+Requires:	%{name}-CHOLMOD = %{cholmod_ver}-%{release}
+
+%description KLU_CHOLMOD
+klu_cholmod is an user-defined ordering function to interface KLU to
+CHOLMOD.
+
+%description KLU_CHOLMOD -l pl.UTF-8
+klu_cholmod to zdefiniowana przez użytkownika funkcja porządkująca,
+służąca jako interfejs KLU do CHOLMOD.
+
+%package KLU_CHOLMOD-devel
+Summary:	Header files for KLU library
+Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki KLU
+Version:	%{klu_ver}
+License:	LGPL v2.1+
+Group:		Development/Libraries
+Requires:	%{name}-KLU-devel = %{klu_ver}-%{release}
+Requires:	%{name}-KLU_CHOLMOD = %{klu_ver}-%{release}
+
+%description KLU_CHOLMOD-devel
+Header files for KLU_CHOLMOD library.
+
+%description KLU_CHOLMOD-devel -l pl.UTF-8
+Pliki nagłówkowe biblioteki KLU_CHOLMOD.
+
+%package KLU_CHOLMOD-static
+Summary:	Static KLU_CHOLMOD library
+Summary(pl.UTF-8):	Statyczna biblioteka KLU_CHOLMOD
+Version:	%{klu_ver}
+License:	LGPL v2.1+
+Group:		Development/Libraries
+Requires:	%{name}-KLU_CHOLMOD-devel = %{klu_ver}-%{release}
+
+%description KLU_CHOLMOD-static
+Static KLU library.
+
+%description KLU_CHOLMOD-static -l pl.UTF-8
+Statyczna biblioteka KLU.
+
 %package LDL
 Summary:	LDL: a simple LDL^T factorization for sparse matrices
 Summary(pl.UTF-8):	LDL - prosty rozkład LDL^T dla macierzy rzadkich
@@ -755,56 +805,53 @@ Static RBio library.
 %description RBio-static -l pl.UTF-8
 Statyczna biblioteka RBio.
 
-%package SLIP_LU
-Summary:	SLIP_LU: Sparse Left-looking Integer-Preserving LU factorization
-Summary(pl.UTF-8):	SLIP_LU - lewostronny rozkład LU dla macierzy rzadkich zachowujący liczby całkowite
-Version:	%{sliplu_ver}
+%package SPEX
+Summary:	SPEX: SParse EXact algebra
+Summary(pl.UTF-8):	SPEX - dokładna algebra dla macierzy rzadkich
+Version:	%{spex_ver}
 License:	LGPL v3+ or GPL v2+
 Group:		Libraries
 Requires:	%{name}-AMD = %{amd_ver}-%{release}
 Requires:	%{name}-COLAMD = %{colamd_ver}-%{release}
 Requires:	%{name}-config-libs = %{suite_ver}-%{release}
 
-%description SLIP_LU
-SLIP_LU is software package used to solve a sparse systems of linear
-equations exactly using the Sparse Left-looking Integer-Preserving LU
-factorization.
+%description SPEX
+SPEX is software package for SParse EXact algebra.
 
-%description SLIP_LU -l pl.UTF-8
-SLIP_LU to pakiet służący do dokładnego rozwiązywania rzadkich układów
-równań liniowych przy użyciu lewostronnego rzadkiego rozkładu LU
-zachowującego liczby całkowite.
+%description SPEX -l pl.UTF-8
+SPEX (SParse EXact algebra) to pakiet służący do dokładnych obliczeń
+na macierzach rzadkich.
 
-%package SLIP_LU-devel
-Summary:	Header file for SLIP_LU library
-Summary(pl.UTF-8):	Plik nagłówkowy biblioteki SLIP_LU
-Version:	%{sliplu_ver}
+%package SPEX-devel
+Summary:	Header file for SPEX library
+Summary(pl.UTF-8):	Plik nagłówkowy biblioteki SPEX
+Version:	%{spex_ver}
 License:	LGPL v3+ or GPL v2+
 Group:		Development/Libraries
-Requires:	%{name}-SLIP_LU = %{sliplu_ver}-%{release}
+Requires:	%{name}-SPEX = %{spex_ver}-%{release}
 Requires:	%{name}-config-devel = %{suite_ver}-%{release}
 Requires:	gmp-devel
 Requires:	mpfr-devel
 
-%description SLIP_LU-devel
-Header file for SLIP_LU library.
+%description SPEX-devel
+Header file for SPEX library.
 
-%description SLIP_LU-devel -l pl.UTF-8
-Plik nagłówkowy biblioteki SLIP_LU.
+%description SPEX-devel -l pl.UTF-8
+Plik nagłówkowy biblioteki SPEX.
 
-%package SLIP_LU-static
-Summary:	Static SLIP_LU library
-Summary(pl.UTF-8):	Statyczna biblioteka SLIP_LU
-Version:	%{sliplu_ver}
+%package SPEX-static
+Summary:	Static SPEX library
+Summary(pl.UTF-8):	Statyczna biblioteka SPEX
+Version:	%{spex_ver}
 License:	LGPL v3+ or GPL v2+
 Group:		Development/Libraries
-Requires:	%{name}-SLIP_LU-devel = %{sliplu_ver}-%{release}
+Requires:	%{name}-SPEX-devel = %{spex_ver}-%{release}
 
-%description SLIP_LU-static
-Static SLIP_LU library.
+%description SPEX-static
+Static SPEX library.
 
-%description SLIP_LU-static -l pl.UTF-8
-Statyczna biblioteka SLIP_LU.
+%description SPEX-static -l pl.UTF-8
+Statyczna biblioteka SPEX.
 
 %package SPQR
 Summary:	SuiteSparseQR: multithreaded multifrontal sparse QR factorization
@@ -934,6 +981,142 @@ Static UMFPACK library.
 %description UMFPACK-static -l pl.UTF-8
 Statyczna biblioteka UMFPACK.
 
+%package GPURuntime
+Summary:	SuiteSparse GPURuntime library
+Summary(pl.UTF-8):	Biblioteka SuiteSparse GPURuntime
+Version:	%{gpuruntime_ver}
+License:	GPL v2+
+Group:		Libraries
+Requires:	%{name}-config-libs = %{suite_ver}-%{release}
+
+%description GPURuntime
+SuiteSparse_GPURuntime provides helper functions for the GPU.
+
+%description GPURuntime -l pl.UTF-8
+SuiteSparse_GPURuntime dostarcza funkcje pomocnicze dla GPU.
+
+%package GPURuntime-devel
+Summary:	Development files for SuiteSparse GPURuntime library
+Summary(pl.UTF-8):	Pliki programistyczne biblioteki SuiteSparse GPURuntime
+Version:	%{gpuruntime_ver}
+License:	GPL v2+
+Group:		Development/Libraries
+Requires:	%{name}-GPURuntime = %{gpuruntime_ver}-%{release}
+Requires:	%{name}-config-devel = %{suite_ver}-%{release}
+
+%description GPURuntime-devel
+Development files for SuiteSparse GPURuntime library.
+
+%description GPURuntime-devel -l pl.UTF-8
+Pliki programistyczne biblioteki SuiteSparse GPURuntime.
+
+%package GPURuntime-static
+Summary:	Static SuiteSparse GPURuntime library
+Summary(pl.UTF-8):	Biblioteka statyczna SuiteSparse GPURuntime
+Version:	%{gpuruntime_ver}
+License:	GPL v2+
+Group:		Development/Libraries
+Requires:	%{name}-GPURuntime-devel = %{gpuruntime_ver}-%{release}
+
+%description GPURuntime-static
+Static SuiteSparse GPURuntime library.
+
+%description GPURuntime-static -l pl.UTF-8
+Biblioteka statyczna SuiteSparse GPURuntime.
+
+%package GPUQREngine
+Summary:	GPUQREngine library
+Summary(pl.UTF-8):	Biblioteka GPUQREngine
+Version:	%{gpuqrengine_ver}
+License:	GPL v2+
+Group:		Libraries
+Requires:	%{name}-GPURuntime = %{gpuruntime_ver}-%{release}
+
+%description GPUQREngine
+GPUQREngine is a GPU-accelerated QR factorization engine supporting
+SuiteSparseQR.
+
+%description GPUQREngine -l pl.UTF-8
+GPUQREngine to akcelerowany GPU silnik rozkładu QR obsługujący
+SuiteSparseQR.
+
+%package GPUQREngine-devel
+Summary:	Development files for SuiteSparse GPUQREngine library
+Summary(pl.UTF-8):	Pliki programistyczne biblioteki SuiteSparse GPUQREngine
+Version:	%{gpuqrengine_ver}
+License:	GPL v2+
+Group:		Development/Libraries
+Requires:	%{name}-GPUQREngine = %{gpuqrengine_ver}-%{release}
+Requires:	%{name}-config-devel = %{suite_ver}-%{release}
+
+%description GPUQREngine-devel
+Development files for SuiteSparse GPUQREngine library.
+
+%description GPUQREngine-devel -l pl.UTF-8
+Pliki programistyczne biblioteki SuiteSparse GPUQREngine.
+
+%package GPUQREngine-static
+Summary:	Static SuiteSparse GPUQREngine library
+Summary(pl.UTF-8):	Biblioteka statyczna SuiteSparse GPUQREngine
+Version:	%{gpuqrengine_ver}
+License:	GPL v2+
+Group:		Development/Libraries
+Requires:	%{name}-GPUQREngine-devel = %{gpuqrengine_ver}-%{release}
+
+%description GPUQREngine-static
+Static SuiteSparse GPUQREngine library.
+
+%description GPUQREngine-static -l pl.UTF-8
+Biblioteka statyczna SuiteSparse GPUQREngine.
+
+%package Mongoose
+Summary:	Mongoose Graph Partitioning Library
+Summary(pl.UTF-8):	Biblioteka partycjonowania grafów Mongoose
+Version:	%{mongoose_ver}
+License:	GPL v3
+Group:		Libraries
+Requires:	%{name}-config-libs = %{suite_ver}-%{release}
+
+%description Mongoose
+Mongoose is a graph partitioning library. Currently, Mongoose only
+supports edge partitioning, but in the future a vertex separator
+extension will be added.
+
+%description Mongoose -l pl.UTF-8
+Mongoose to biblioteka partycjonowania grafów. Obecnie Mongoose
+obsługuje tylko partycjonowanie krawędzi, ale w przyszłości zostanie
+dodane rozszerzenie separujące wierzchołki.
+
+%package Mongoose-devel
+Summary:	Header files for Mongoose library
+Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki Mongoose
+Version:	%{mongoose_ver}
+License:	GPL v3
+Group:		Development/Libraries
+Requires:	%{name}-Mongoose = %{mongoose_ver}-%{release}
+Requires:	%{name}-config-devel = %{suite_ver}-%{release}
+Requires:	libstdc++-devel >= 6:4.7
+
+%description Mongoose-devel
+Header files for Mongoose library.
+
+%description Mongoose-devel -l pl.UTF-8
+Pliki nagłówkowe biblioteki Mongoose.
+
+%package Mongoose-static
+Summary:	Static Mongoose library
+Summary(pl.UTF-8):	Statyczna biblioteka Mongoose
+Version:	%{mongoose_ver}
+License:	GPL v3
+Group:		Development/Libraries
+Requires:	%{name}-Mongoose-devel = %{mongoose_ver}-%{release}
+
+%description Mongoose-static
+Static Mongoose library.
+
+%description Mongoose-static -l pl.UTF-8
+Statyczna biblioteka Mongoose.
+
 %prep
 %setup -q
 %patch -P0 -p1
@@ -944,43 +1127,27 @@ Statyczna biblioteka UMFPACK.
 %endif
 
 %build
-export LD_LIBRARY_PATH=$(pwd)/lib${LD_LIBRARY_PATH+:$LD_LIBRARY_PATH}
-%{__make} -j1 \
-	CC="%{__cc}" \
-	CXX="%{__cxx}" \
-	CFLAGS="%{rpmcflags}" \
-	CXXFLAGS="%{rpmcxxflags}" \
-	F77=gfortran \
-	FFLAGS="%{rpmcflags}" \
-	LDFLAGS="%{rpmldflags} -L$(pwd)/lib" \
-	%{!?with_metis:CHOLMOD_CONFIG=-DNPARTITION} \
-	CUDA=no \
-	%{?with_metis:MY_METIS_LIB=-lmetis MY_METIS_INC=%{_includedir}}
+# TODO: GraphBLAS?
+%define modules SuiteSparse_config AMD BTF CAMD CCOLAMD COLAMD CHOLMOD CXSparse LDL KLU UMFPACK RBio %{?with_cuda:SuiteSparse_GPURuntime GPUQREngine} SPQR SPEX Mongoose
+
+for mod in %{modules} ; do
+%cmake -S ${mod} -B ${mod}/build \
+	-DBLA_PREFER_PKGCONFIG=ON \
+	-DCMAKE_INSTALL_INCLUDEDIR:PATH=include/suitesparse \
+	%{!?with_cuda:-DENABLE_CUDA=OFF} \
+	%{!?with_metis:-DNPARTITION=ON} \
+	%{!?with_static_libs:-DNSTATIC=ON}
+
+%{__make} -C ${mod}/build
+done
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_libdir},%{_includedir}/suitesparse,%{_datadir}/misc}
 
-%{__make} -j1 install \
-	CC="%{__cc}" \
-	CXX="%{__cxx}" \
-	CFLAGS="%{rpmcflags}" \
-	CXXFLAGS="%{rpmcxxflags}" \
-	F77=gfortran \
-	FFLAGS="%{rpmcflags}" \
-	LDFLAGS="%{rpmldflags} -L$RPM_BUILD_ROOT%{_libdir}" \
-	CUDA=no \
-	INSTALL=$RPM_BUILD_ROOT%{_prefix} \
-	INSTALL_INCLUDE=$RPM_BUILD_ROOT%{_includedir}/suitesparse \
-	INSTALL_LIB=$RPM_BUILD_ROOT%{_libdir} \
-	MY_METIS_LIB=-lmetis
-
-cp -p SuiteSparse_config/SuiteSparse_config.mk $RPM_BUILD_ROOT%{_datadir}/misc
-cp -p SuiteSparse_config/lib*.a */Lib/lib*.a $RPM_BUILD_ROOT%{_libdir}
-# CXSparse is superset; don't package CSparse
-%{__rm} $RPM_BUILD_ROOT%{_libdir}/libcsparse.a
-# packaged as %doc in individual subpackages
-%{__rm} -r $RPM_BUILD_ROOT%{_docdir}/suitesparse-%{suite_ver}
+for mod in %{modules} ; do
+%{__make} -C ${mod}/build install \
+	DESTDIR=$RPM_BUILD_ROOT
+done
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -1015,14 +1182,17 @@ rm -rf $RPM_BUILD_ROOT
 %post	KLU -p /sbin/ldconfig
 %postun	KLU -p /sbin/ldconfig
 
+%post	KLU_CHOLMOD -p /sbin/ldconfig
+%postun	KLU_CHOLMOD -p /sbin/ldconfig
+
 %post	LDL -p /sbin/ldconfig
 %postun	LDL -p /sbin/ldconfig
 
 %post	RBio -p /sbin/ldconfig
 %postun	RBio -p /sbin/ldconfig
 
-%post	SLIP_LU -p /sbin/ldconfig
-%postun	SLIP_LU -p /sbin/ldconfig
+%post	SPEX -p /sbin/ldconfig
+%postun	SPEX -p /sbin/ldconfig
 
 %post	SPQR -p /sbin/ldconfig
 %postun	SPQR -p /sbin/ldconfig
@@ -1030,240 +1200,365 @@ rm -rf $RPM_BUILD_ROOT
 %post	UMFPACK -p /sbin/ldconfig
 %postun	UMFPACK -p /sbin/ldconfig
 
+%post	GPURuntime -p /sbin/ldconfig
+%postun	GPURuntime -p /sbin/ldconfig
+
+%post	GPUQREngine -p /sbin/ldconfig
+%postun	GPUQREngine -p /sbin/ldconfig
+
 %files config
 %defattr(644,root,root,755)
 %doc ChangeLog README.md
 %dir %{_includedir}/suitesparse
 %{_includedir}/suitesparse/SuiteSparse_config.h
-%{_datadir}/misc/SuiteSparse_config.mk
 
 %files config-libs
 %defattr(644,root,root,755)
 %doc SuiteSparse_config/README.txt
 %attr(755,root,root) %{_libdir}/libsuitesparseconfig.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libsuitesparseconfig.so.5
+%ghost %{_libdir}/libsuitesparseconfig.so.6
 
 %files config-devel
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libsuitesparseconfig.so
+%{_libdir}/libsuitesparseconfig.so
+%dir %{_libdir}/cmake/SuiteSparse
+%{_libdir}/cmake/SuiteSparse/FindSuiteSparse_config.cmake
 
+%if %{with static_libs}
 %files config-static
 %defattr(644,root,root,755)
 %{_libdir}/libsuitesparseconfig.a
+%endif
 
 %files AMD
 %defattr(644,root,root,755)
 %doc AMD/README.txt AMD/Doc/{ChangeLog,License.txt}
 %attr(755,root,root) %{_libdir}/libamd.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libamd.so.2
+%ghost %{_libdir}/libamd.so.3
 
 %files AMD-devel
 %defattr(644,root,root,755)
 %doc AMD/Doc/AMD_UserGuide.pdf
-%attr(755,root,root) %{_libdir}/libamd.so
+%{_libdir}/libamd.so
 %{_includedir}/suitesparse/amd.h
+%{_libdir}/cmake/SuiteSparse/FindAMD.cmake
 
+%if %{with static_libs}
 %files AMD-static
 %defattr(644,root,root,755)
 %{_libdir}/libamd.a
+%endif
 
 %files AMD-fortran
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libamdf77.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libamdf77.so.2
+%ghost %{_libdir}/libamdf77.so.3
 
 %files AMD-fortran-devel
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libamdf77.so
+%{_libdir}/libamdf77.so
 
+%if %{with static_libs}
 %files AMD-fortran-static
 %defattr(644,root,root,755)
 %{_libdir}/libamdf77.a
+%endif
 
 %files BTF
 %defattr(644,root,root,755)
 %doc BTF/README.txt BTF/Doc/ChangeLog
 %attr(755,root,root) %{_libdir}/libbtf.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libbtf.so.1
+%ghost %{_libdir}/libbtf.so.2
 
 %files BTF-devel
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libbtf.so
+%{_libdir}/libbtf.so
 %{_includedir}/suitesparse/btf.h
+%{_libdir}/cmake/SuiteSparse/FindBTF.cmake
 
+%if %{with static_libs}
 %files BTF-static
 %defattr(644,root,root,755)
 %{_libdir}/libbtf.a
+%endif
 
 %files CAMD
 %defattr(644,root,root,755)
 %doc CAMD/README.txt CAMD/Doc/{ChangeLog,License.txt}
 %attr(755,root,root) %{_libdir}/libcamd.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libcamd.so.2
+%ghost %{_libdir}/libcamd.so.3
 
 %files CAMD-devel
 %defattr(644,root,root,755)
 %doc CAMD/Doc/CAMD_UserGuide.pdf
-%attr(755,root,root) %{_libdir}/libcamd.so
+%{_libdir}/libcamd.so
 %{_includedir}/suitesparse/camd.h
+%{_libdir}/cmake/SuiteSparse/FindCAMD.cmake
 
+%if %{with static_libs}
 %files CAMD-static
 %defattr(644,root,root,755)
 %{_libdir}/libcamd.a
+%endif
 
 %files CCOLAMD
 %defattr(644,root,root,755)
 %doc CCOLAMD/README.txt CCOLAMD/Doc/ChangeLog
 %attr(755,root,root) %{_libdir}/libccolamd.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libccolamd.so.2
+%ghost %{_libdir}/libccolamd.so.3
 
 %files CCOLAMD-devel
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libccolamd.so
+%{_libdir}/libccolamd.so
 %{_includedir}/suitesparse/ccolamd.h
+%{_libdir}/cmake/SuiteSparse/FindCCOLAMD.cmake
 
+%if %{with static_libs}
 %files CCOLAMD-static
 %defattr(644,root,root,755)
 %{_libdir}/libccolamd.a
+%endif
 
 %files COLAMD
 %defattr(644,root,root,755)
 %doc COLAMD/README.txt COLAMD/Doc/ChangeLog
 %attr(755,root,root) %{_libdir}/libcolamd.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libcolamd.so.2
+%ghost %{_libdir}/libcolamd.so.3
 
 %files COLAMD-devel
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libcolamd.so
+%{_libdir}/libcolamd.so
 %{_includedir}/suitesparse/colamd.h
+%{_libdir}/cmake/SuiteSparse/FindCOLAMD.cmake
 
+%if %{with static_libs}
 %files COLAMD-static
 %defattr(644,root,root,755)
 %{_libdir}/libcolamd.a
+%endif
 
 %files CHOLMOD
 %defattr(644,root,root,755)
 %doc CHOLMOD/README.txt CHOLMOD/Doc/ChangeLog
 %attr(755,root,root) %{_libdir}/libcholmod.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libcholmod.so.3
+%ghost %{_libdir}/libcholmod.so.4
 
 %files CHOLMOD-devel
 %defattr(644,root,root,755)
 %doc CHOLMOD/Doc/CHOLMOD_UserGuide.pdf
-%attr(755,root,root) %{_libdir}/libcholmod.so
-%{_includedir}/suitesparse/cholmod*.h
+%{_libdir}/libcholmod.so
+%{_includedir}/suitesparse/cholmod.h
+%{_libdir}/cmake/SuiteSparse/FindCHOLMOD.cmake
+%{_libdir}/cmake/SuiteSparse/FindCHOLMOD_CUDA.cmake
 
+%if %{with static_libs}
 %files CHOLMOD-static
 %defattr(644,root,root,755)
 %{_libdir}/libcholmod.a
+%endif
 
 %files CXSparse
 %defattr(644,root,root,755)
 %doc CXSparse/README.txt CXSparse/Doc/{ChangeLog,License.txt}
 %attr(755,root,root) %{_libdir}/libcxsparse.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libcxsparse.so.3
+%ghost %{_libdir}/libcxsparse.so.4
 
 %files CXSparse-devel
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libcxsparse.so
+%{_libdir}/libcxsparse.so
 %{_includedir}/suitesparse/cs.h
+%{_libdir}/cmake/SuiteSparse/FindCXSparse.cmake
 
+%if %{with static_libs}
 %files CXSparse-static
 %defattr(644,root,root,755)
 %{_libdir}/libcxsparse.a
+%endif
 
 %files KLU
 %defattr(644,root,root,755)
 %doc KLU/README.txt KLU/Doc/ChangeLog
 %attr(755,root,root) %{_libdir}/libklu.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libklu.so.1
+%ghost %{_libdir}/libklu.so.2
 
 %files KLU-devel
 %defattr(644,root,root,755)
 %doc KLU/Doc/{KLU_UserGuide,palamadai_e}.pdf
-%attr(755,root,root) %{_libdir}/libklu.so
+%{_libdir}/libklu.so
 %{_includedir}/suitesparse/klu.h
+%{_libdir}/cmake/SuiteSparse/FindKLU.cmake
 
+%if %{with static_libs}
 %files KLU-static
 %defattr(644,root,root,755)
 %{_libdir}/libklu.a
+%endif
+
+%files KLU_CHOLMOD
+%defattr(644,root,root,755)
+%doc KLU/User/README.txt
+%attr(755,root,root) %{_libdir}/libklu_cholmod.so.2.0.0
+%ghost %{_libdir}/libklu_cholmod.so.2
+
+%files KLU_CHOLMOD-devel
+%defattr(644,root,root,755)
+%{_libdir}/libklu_cholmod.so
+%{_includedir}/suitesparse/klu_cholmod.h
+%{_libdir}/cmake/SuiteSparse/FindKLU_CHOLMOD.cmake
+
+%if %{with static_libs}
+%files KLU_CHOLMOD-static
+%defattr(644,root,root,755)
+%{_libdir}/libklu_cholmod.a
+%endif
 
 %files LDL
 %defattr(644,root,root,755)
 %doc LDL/README.txt LDL/Doc/ChangeLog
 %attr(755,root,root) %{_libdir}/libldl.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libldl.so.2
+%ghost %{_libdir}/libldl.so.3
 
 %files LDL-devel
 %defattr(644,root,root,755)
 %doc LDL/Doc/ldl_userguide.pdf
-%attr(755,root,root) %{_libdir}/libldl.so
+%{_libdir}/libldl.so
 %{_includedir}/suitesparse/ldl.h
+%{_libdir}/cmake/SuiteSparse/FindLDL.cmake
 
+%if %{with static_libs}
 %files LDL-static
 %defattr(644,root,root,755)
 %{_libdir}/libldl.a
+%endif
 
 %files RBio
 %defattr(644,root,root,755)
 %doc RBio/README.txt RBio/Doc/{ChangeLog,License.txt}
 %attr(755,root,root) %{_libdir}/librbio.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/librbio.so.2
+%ghost %{_libdir}/librbio.so.3
 
 %files RBio-devel
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/librbio.so
+%{_libdir}/librbio.so
 %{_includedir}/suitesparse/RBio.h
+%{_libdir}/cmake/SuiteSparse/FindRBio.cmake
 
+%if %{with static_libs}
 %files RBio-static
 %defattr(644,root,root,755)
 %{_libdir}/librbio.a
+%endif
 
-%files SLIP_LU
+%files SPEX
 %defattr(644,root,root,755)
-%doc SLIP_LU/README.md SLIP_LU/License/license.txt
-%attr(755,root,root) %{_libdir}/libsliplu.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libsliplu.so.1
+%doc SPEX/README.md
+%attr(755,root,root) %{_libdir}/libspex.so.*.*.*
+%ghost %{_libdir}/libspex.so.2
 
-%files SLIP_LU-devel
+%files SPEX-devel
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libsliplu.so
-%{_includedir}/suitesparse/SLIP_LU.h
+%{_libdir}/libspex.so
+%{_includedir}/suitesparse/SPEX.h
+%{_libdir}/cmake/SuiteSparse/FindSPEX.cmake
 
-%files SLIP_LU-static
+%if %{with static_libs}
+%files SPEX-static
 %defattr(644,root,root,755)
-%{_libdir}/libsliplu.a
+%{_libdir}/libspex.a
+%endif
 
 %files SPQR
 %defattr(644,root,root,755)
 %doc SPQR/README.txt SPQR/Doc/ChangeLog
 %attr(755,root,root) %{_libdir}/libspqr.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libspqr.so.2
+%ghost %{_libdir}/libspqr.so.3
 
 %files SPQR-devel
 %defattr(644,root,root,755)
 %doc SPQR/Doc/{algo_spqr,spqr,spqr_user_guide}.pdf
-%attr(755,root,root) %{_libdir}/libspqr.so
+%{_libdir}/libspqr.so
 %{_includedir}/suitesparse/SuiteSparseQR.hpp
 %{_includedir}/suitesparse/SuiteSparseQR*.h
-%{_includedir}/suitesparse/spqr.hpp
+%{_libdir}/cmake/SuiteSparse/FindSPQR.cmake
+%{_libdir}/cmake/SuiteSparse/FindSPQR_CUDA.cmake
 
+%if %{with static_libs}
 %files SPQR-static
 %defattr(644,root,root,755)
 %{_libdir}/libspqr.a
+%endif
 
 %files UMFPACK
 %defattr(644,root,root,755)
 %doc UMFPACK/README.txt UMFPACK/Doc/{ChangeLog,License.txt}
 %attr(755,root,root) %{_libdir}/libumfpack.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libumfpack.so.5
+%ghost %{_libdir}/libumfpack.so.6
 
 %files UMFPACK-devel
 %defattr(644,root,root,755)
 %doc UMFPACK/Doc/UMFPACK_{QuickStart,UserGuide}.pdf
-%attr(755,root,root) %{_libdir}/libumfpack.so
-%{_includedir}/suitesparse/umfpack*.h
+%{_libdir}/libumfpack.so
+%{_includedir}/suitesparse/umfpack.h
+%{_libdir}/cmake/SuiteSparse/FindUMFPACK.cmake
 
+%if %{with static_libs}
 %files UMFPACK-static
 %defattr(644,root,root,755)
 %{_libdir}/libumfpack.a
+%endif
+
+%if %{with cuda}
+%files GPURuntime
+%defattr(644,root,root,755)
+%doc SuiteSparse_GPURuntime/README.txt
+%attr(755,root,root) %{_libdir}/libsuitesparse_gpuruntime.so.2.0.0
+%ghost %{_libdir}/libsuitesparse_gpuruntime.so.2
+
+%files GPURuntime-devel
+%defattr(644,root,root,755)
+%{_libdir}/libsuitesparse_gpuruntime.so
+%{_libdir}/cmake/SuiteSparse/FindSuiteSparse_GPURuntime.cmake
+
+%if %{with static_libs}
+%files GPURuntime-static
+%defattr(644,root,root,755)
+%{_libdir}/libsuitesparse_gpuruntime_static.a
+%endif
+
+%files GPUQREngine
+%defattr(644,root,root,755)
+%doc GPUQREngine/README.txt
+%attr(755,root,root) %{_libdir}/libgpuqrengine.so.2.0.0
+%ghost %{_libdir}/libgpuqrengine.so.2
+
+%files GPUQREngine-devel
+%defattr(644,root,root,755)
+%{_libdir}/libgpuqrengine.so
+%{_libdir}/cmake/SuiteSparse/FindGPUQREngine.cmake
+
+%if %{with static_libs}
+%files GPUQREngine-static
+%defattr(644,root,root,755)
+%{_libdir}/libgpuqrengine_static.a
+%endif
+%endif
+
+%files Mongoose
+%defattr(644,root,root,755)
+%doc Mongoose/README.md
+%attr(755,root,root) %{_bindir}/mongoose
+%attr(755,root,root) %{_libdir}/libmongoose.so.*.*.*
+%ghost %{_libdir}/libmongoose.so.3
+
+%files Mongoose-devel
+%defattr(644,root,root,755)
+%doc Mongoose/Doc/Mongoose_UserGuide.pdf
+%{_libdir}/libmongoose.so
+%{_includedir}/suitesparse/Mongoose.hpp
+%{_libdir}/cmake/SuiteSparse/FindMongoose.cmake
+
+%if %{with static_libs}
+%files Mongoose-static
+%defattr(644,root,root,755)
+%{_libdir}/libmongoose.a
+%endif

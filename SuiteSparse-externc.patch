@@ -1,31 +1,35 @@
---- SuiteSparse/SuiteSparse_config/SuiteSparse_config.h.orig	2023-01-08 20:43:25.056391141 +0100
-+++ SuiteSparse/SuiteSparse_config/SuiteSparse_config.h	2023-01-08 20:44:40.592648593 +0100
-@@ -38,13 +38,13 @@
+--- SuiteSparse-6.0.1/SuiteSparse_config/SuiteSparse_config.h.orig	2022-11-14 01:04:25.000000000 +0100
++++ SuiteSparse-6.0.1/SuiteSparse_config/SuiteSparse_config.h	2025-06-29 11:47:15.469380302 +0200
+@@ -19,11 +19,6 @@
  #ifndef SUITESPARSE_CONFIG_H
  #define SUITESPARSE_CONFIG_H
  
-+#include <limits.h>
-+#include <stdlib.h>
-+
- #ifdef __cplusplus
- extern "C" {
+-#ifdef __cplusplus
+-extern "C"
+-{
+-#endif
+-
+ //------------------------------------------------------------------------------
+ // SuiteSparse-wide ANSI C11 #include files
+ //------------------------------------------------------------------------------
+@@ -89,6 +84,11 @@ extern "C"
+ #include "matrix.h"
  #endif
  
--#include <limits.h>
--#include <stdlib.h>
--
- /* ========================================================================== */
- /* === SuiteSparse_long ===================================================== */
- /* ========================================================================== */
---- SuiteSparse/AMD/Include/amd.h.orig	2014-03-21 20:21:57.000000000 +0100
-+++ SuiteSparse/AMD/Include/amd.h	2023-01-04 20:58:16.230505798 +0100
-@@ -35,16 +35,16 @@
++#ifdef __cplusplus
++extern "C"
++{
++#endif
++
+ //------------------------------------------------------------------------------
+ // string and token handling macros
+ //------------------------------------------------------------------------------
+--- SuiteSparse-6.0.1/AMD/Include/amd.h.orig	2025-06-29 11:48:25.092336455 +0200
++++ SuiteSparse-6.0.1/AMD/Include/amd.h	2025-06-29 11:48:27.492323453 +0200
+@@ -35,13 +35,13 @@
  #ifndef AMD_H
  #define AMD_H
  
-+/* get the definition of size_t: */
-+#include <stddef.h>
-+
 +#include "SuiteSparse_config.h"
 +
  /* make it easy for C++ programs to include AMD */
@@ -33,17 +37,14 @@
  extern "C" {
  #endif
  
--/* get the definition of size_t: */
--#include <stddef.h>
--
 -#include "SuiteSparse_config.h"
 -
- int amd_order                  /* returns AMD_OK, AMD_OK_BUT_JUMBLED,
-                                 * AMD_INVALID, or AMD_OUT_OF_MEMORY */
+ SUITESPARSE_PUBLIC int amd_order  /* returns AMD_OK, AMD_OK_BUT_JUMBLED,
+                                     * AMD_INVALID, or AMD_OUT_OF_MEMORY */
  (
---- SuiteSparse/BTF/Include/btf.h.orig	2023-01-05 21:42:08.734841990 +0100
-+++ SuiteSparse/BTF/Include/btf.h	2023-01-05 21:42:11.574826604 +0100
-@@ -88,13 +88,13 @@
+--- SuiteSparse-6.0.1/BTF/Include/btf.h.orig	2022-11-14 01:04:25.000000000 +0100
++++ SuiteSparse-6.0.1/BTF/Include/btf.h	2025-06-29 11:49:10.875421760 +0200
+@@ -90,13 +90,13 @@
  #ifndef _BTF_H
  #define _BTF_H
  
@@ -56,56 +57,48 @@
  
 -#include "SuiteSparse_config.h"
 -
- int btf_maxtrans    /* returns # of columns matched */
+ SUITESPARSE_PUBLIC
+ int32_t btf_maxtrans    /* returns # of columns matched */
  (
-     /* --- input, not modified: --- */
---- SuiteSparse/CAMD/Include/camd.h.orig	2014-03-21 20:21:51.000000000 +0100
-+++ SuiteSparse/CAMD/Include/camd.h	2023-01-07 11:34:30.942879513 +0100
-@@ -23,16 +23,16 @@
+--- SuiteSparse-6.0.1/CAMD/Include/camd.h.orig	2022-11-14 01:04:25.000000000 +0100
++++ SuiteSparse-6.0.1/CAMD/Include/camd.h	2025-06-29 11:50:04.145133173 +0200
+@@ -23,13 +23,13 @@
  #ifndef CAMD_H
  #define CAMD_H
  
--/* make it easy for C++ programs to include CAMD */
--#ifdef __cplusplus
--extern "C" {
--#endif
--
- /* get the definition of size_t: */
- #include <stddef.h>
- 
- #include "SuiteSparse_config.h"
- 
-+/* make it easy for C++ programs to include CAMD */
-+#ifdef __cplusplus
-+extern "C" {
-+#endif
++#include "SuiteSparse_config.h"
 +
- int camd_order              /* returns CAMD_OK, CAMD_OK_BUT_JUMBLED,
+ /* make it easy for C++ programs to include CAMD */
+ #ifdef __cplusplus
+ extern "C" {
+ #endif
+ 
+-#include "SuiteSparse_config.h"
+-
+ SUITESPARSE_PUBLIC int camd_order /* returns CAMD_OK, CAMD_OK_BUT_JUMBLED,
                               * CAMD_INVALID, or CAMD_OUT_OF_MEMORY */
  (
---- SuiteSparse/CCOLAMD/Include/ccolamd.h.orig	2014-03-21 20:21:07.000000000 +0100
-+++ SuiteSparse/CCOLAMD/Include/ccolamd.h	2023-01-07 14:56:06.067354598 +0100
-@@ -16,14 +16,14 @@
+--- SuiteSparse-6.0.1/CCOLAMD/Include/ccolamd.h.orig	2022-11-14 01:04:25.000000000 +0100
++++ SuiteSparse-6.0.1/CCOLAMD/Include/ccolamd.h	2025-06-29 11:55:42.756632091 +0200
+@@ -16,13 +16,13 @@
  #ifndef CCOLAMD_H
  #define CCOLAMD_H
  
-+/* for size_t definition: */
-+#include <stdlib.h>
++#include "SuiteSparse_config.h"
 +
  /* make it easy for C++ programs to include CCOLAMD */
  #ifdef __cplusplus
  extern "C" {
  #endif
  
--/* for size_t definition: */
--#include <stdlib.h>
+-#include "SuiteSparse_config.h"
 -
  /* ========================================================================== */
  /* === CCOLAMD version ====================================================== */
  /* ========================================================================== */
---- SuiteSparse/COLAMD/Include/colamd.h.orig	2014-03-21 20:13:38.000000000 +0100
-+++ SuiteSparse/COLAMD/Include/colamd.h	2023-01-07 16:11:41.276118597 +0100
-@@ -44,17 +44,17 @@
+--- SuiteSparse-6.0.1/COLAMD/Include/colamd.h.orig	2022-11-14 01:04:25.000000000 +0100
++++ SuiteSparse-6.0.1/COLAMD/Include/colamd.h	2025-06-29 11:56:15.536454507 +0200
+@@ -37,17 +37,17 @@
  #ifndef COLAMD_H
  #define COLAMD_H
  
@@ -118,7 +111,7 @@
  /* === Include files ======================================================== */
  /* ========================================================================== */
  
- #include <stdlib.h>
+ #include "SuiteSparse_config.h"
  
 +/* make it easy for C++ programs to include COLAMD */
 +#ifdef __cplusplus
@@ -128,11 +121,23 @@
  /* ========================================================================== */
  /* === COLAMD version ======================================================= */
  /* ========================================================================== */
---- SuiteSparse/CHOLMOD/Include/cholmod_blas.h.orig	2023-01-07 17:06:54.181504381 +0100
-+++ SuiteSparse/CHOLMOD/Include/cholmod_blas.h	2023-01-07 17:06:58.504814293 +0100
-@@ -15,6 +15,11 @@
- #ifndef CHOLMOD_BLAS_H
- #define CHOLMOD_BLAS_H
+--- SuiteSparse-6.0.1/CHOLMOD/Include/cholmod.h.orig	2022-11-14 01:04:25.000000000 +0100
++++ SuiteSparse-6.0.1/CHOLMOD/Include/cholmod.h	2025-06-29 11:57:34.549359791 +0200
+@@ -102,11 +102,6 @@
+ #define CHOLMOD_SUB_VERSION    0
+ #define CHOLMOD_SUBSUB_VERSION 1
+ 
+-/* make it easy for C++ programs to include CHOLMOD */
+-#ifdef __cplusplus
+-extern "C" {
+-#endif
+-
+ /* ========================================================================== */
+ /* === Include/cholmod_io64 ================================================= */
+ /* ========================================================================== */
+@@ -147,6 +142,11 @@ extern "C" {
+ 
+ #include "SuiteSparse_config.h"
  
 +/* make it easy for C++ programs to include CHOLMOD */
 +#ifdef __cplusplus
@@ -140,135 +145,11 @@
 +#endif
 +
  /* ========================================================================== */
- /* === Architecture ========================================================= */
+ /* === Include/cholmod_config.h ============================================= */
  /* ========================================================================== */
-@@ -452,4 +457,8 @@ void BLAS_ZGER (BLAS_INT *m, BLAS_INT *n
-     } \
- }
- 
-+#ifdef __cplusplus
-+}
-+#endif
-+
- #endif
---- SuiteSparse/CHOLMOD/Include/cholmod_camd.h.orig	2014-03-21 20:11:21.000000000 +0100
-+++ SuiteSparse/CHOLMOD/Include/cholmod_camd.h	2023-01-07 17:07:49.154539900 +0100
-@@ -31,6 +31,10 @@
- 
- #include "cholmod_core.h"
- 
-+#ifdef __cplusplus
-+extern "C" {
-+#endif
-+
- /* -------------------------------------------------------------------------- */
- /* cholmod_ccolamd */
- /* -------------------------------------------------------------------------- */
-@@ -99,4 +103,8 @@ int cholmod_camd
- int cholmod_l_camd (cholmod_sparse *, SuiteSparse_long *, size_t,
-     SuiteSparse_long *, SuiteSparse_long *, cholmod_common *) ;
- 
-+#ifdef __cplusplus
-+}
-+#endif
-+
- #endif
---- SuiteSparse/CHOLMOD/Include/cholmod_check.h.orig	2014-03-21 20:11:21.000000000 +0100
-+++ SuiteSparse/CHOLMOD/Include/cholmod_check.h	2023-01-07 17:08:22.791024342 +0100
-@@ -69,6 +69,11 @@
- #include "cholmod_core.h"
- #include <stdio.h>
- 
-+/* make it easy for C++ programs to include CHOLMOD */
-+#ifdef __cplusplus
-+extern "C" {
-+#endif
-+
- /* -------------------------------------------------------------------------- */
- /* cholmod_check_common:  check the Common object */
- /* -------------------------------------------------------------------------- */
-@@ -424,4 +429,9 @@ int cholmod_write_dense
- 
- int cholmod_l_write_dense (FILE *, cholmod_dense *, const char *,
-     cholmod_common *) ;
-+
-+#ifdef __cplusplus
-+}
-+#endif
-+
- #endif
---- SuiteSparse/CHOLMOD/Include/cholmod_cholesky.h.orig	2014-06-04 21:33:21.000000000 +0200
-+++ SuiteSparse/CHOLMOD/Include/cholmod_cholesky.h	2023-01-07 17:09:00.270821296 +0100
-@@ -67,6 +67,11 @@
- #include "cholmod_supernodal.h"
- #endif
- 
-+/* make it easy for C++ programs to include CHOLMOD */
-+#ifdef __cplusplus
-+extern "C" {
-+#endif
-+
- /* -------------------------------------------------------------------------- */
- /* cholmod_analyze:  order and analyze (simplicial or supernodal) */
- /* -------------------------------------------------------------------------- */
-@@ -584,4 +589,8 @@ SuiteSparse_long cholmod_postorder	/* re
- SuiteSparse_long cholmod_l_postorder (SuiteSparse_long *, size_t,
-     SuiteSparse_long *, SuiteSparse_long *, cholmod_common *) ;
- 
-+#ifdef __cplusplus
-+}
-+#endif
-+
- #endif
---- SuiteSparse/CHOLMOD/Include/cholmod_core.h.orig	2015-07-15 05:18:18.000000000 +0200
-+++ SuiteSparse/CHOLMOD/Include/cholmod_core.h	2023-01-08 20:50:15.337501791 +0100
-@@ -289,6 +289,11 @@
- #define CHOLMOD_HOST_SUPERNODE_BUFFERS 8
- #define CHOLMOD_DEVICE_STREAMS 2
- 
-+/* make it easy for C++ programs to include CHOLMOD */
-+#ifdef __cplusplus
-+extern "C" {
-+#endif
-+
- /* ========================================================================== */
- /* === CHOLMOD objects ====================================================== */
- /* ========================================================================== */
-@@ -2447,4 +2452,8 @@ int cholmod_l_version (int version [3])
- 
- #endif
- 
-+#ifdef __cplusplus
-+}
-+#endif
-+
- #endif
---- SuiteSparse/CHOLMOD/Include/cholmod_gpu.h.orig	2018-12-23 03:18:58.000000000 +0100
-+++ SuiteSparse/CHOLMOD/Include/cholmod_gpu.h	2023-01-16 17:36:07.886049654 +0100
-@@ -23,6 +23,11 @@
- #endif
- #endif
- 
-+/* make it easy for C++ programs to include CHOLMOD */
-+#ifdef __cplusplus
-+extern "C" {
-+#endif
-+
- /* CHOLMOD_GPU_PRINTF: for printing GPU debug error messages */
- /*
- #define CHOLMOD_GPU_PRINTF(args) printf args
-@@ -77,4 +82,8 @@ void cholmod_l_gpu_end ( cholmod_common
- int cholmod_gpu_allocate   ( cholmod_common *Common ) ;
- int cholmod_l_gpu_allocate ( cholmod_common *Common ) ;
- 
-+#ifdef __cplusplus
-+}
-+#endif
-+
- #endif
---- SuiteSparse/CHOLMOD/Include/cholmod_gpu_kernels.h.orig	2014-03-23 01:15:27.000000000 +0100
-+++ SuiteSparse/CHOLMOD/Include/cholmod_gpu_kernels.h	2023-01-07 17:14:19.432425583 +0100
-@@ -19,13 +19,13 @@
+--- SuiteSparse-6.0.1/CHOLMOD/GPU/cholmod_gpu_kernels.h.orig	2022-11-14 01:04:25.000000000 +0100
++++ SuiteSparse-6.0.1/CHOLMOD/GPU/cholmod_gpu_kernels.h	2025-06-29 12:00:00.441902756 +0200
+@@ -15,13 +15,13 @@
  #ifndef CHOLMODGPUKERNELS_H
  #define CHOLMODGPUKERNELS_H
  
@@ -281,138 +162,24 @@
  
 -#include "SuiteSparse_config.h"
 -
- int createMapOnDevice ( Int *d_Map, Int *d_Ls, Int psi, Int nsrow ); 
+ int createMapOnDevice ( int64_t *d_Map, int64_t *d_Ls, int64_t psi, int64_t nsrow ); 
  
- int createRelativeMapOnDevice ( Int *d_Map, Int *d_Ls, Int *d_RelativeMap,
---- SuiteSparse/CHOLMOD/Include/cholmod_matrixops.h.orig	2014-03-21 20:11:19.000000000 +0100
-+++ SuiteSparse/CHOLMOD/Include/cholmod_matrixops.h	2023-01-07 17:19:34.947382958 +0100
-@@ -37,6 +37,11 @@
- 
- #include "cholmod_core.h"
- 
-+/* make it easy for C++ programs to include CHOLMOD */
-+#ifdef __cplusplus
-+extern "C" {
-+#endif
-+
- /* -------------------------------------------------------------------------- */
- /* cholmod_drop:  drop entries with small absolute value */
- /* -------------------------------------------------------------------------- */
-@@ -234,4 +239,8 @@ int cholmod_l_symmetry (cholmod_sparse *
-     SuiteSparse_long *, SuiteSparse_long *, SuiteSparse_long *,
-     cholmod_common *) ;
- 
-+#ifdef __cplusplus
-+}
-+#endif
-+
- #endif
---- SuiteSparse/CHOLMOD/Include/cholmod_modify.h.orig	2014-06-04 21:44:15.000000000 +0200
-+++ SuiteSparse/CHOLMOD/Include/cholmod_modify.h	2023-01-07 17:20:07.183874985 +0100
-@@ -47,6 +47,11 @@
- 
- #include "cholmod_core.h"
- 
-+/* make it easy for C++ programs to include CHOLMOD */
-+#ifdef __cplusplus
-+extern "C" {
-+#endif
-+
- /* -------------------------------------------------------------------------- */
- /* cholmod_updown:  multiple rank update/downdate */
- /* -------------------------------------------------------------------------- */
-@@ -324,4 +329,8 @@ int cholmod_l_rowdel_mark (size_t, cholm
-     SuiteSparse_long *, cholmod_factor *, cholmod_dense *, cholmod_dense *,
-     cholmod_common *) ;
- 
-+#ifdef __cplusplus
-+}
-+#endif
-+
- #endif
---- SuiteSparse/CHOLMOD/Include/cholmod_partition.h.orig	2014-03-21 20:11:21.000000000 +0100
-+++ SuiteSparse/CHOLMOD/Include/cholmod_partition.h	2023-01-07 17:20:32.837069343 +0100
-@@ -40,6 +40,11 @@
- #include "cholmod_core.h"
- #include "cholmod_camd.h"
- 
-+/* make it easy for C++ programs to include CHOLMOD */
-+#ifdef __cplusplus
-+extern "C" {
-+#endif
-+
- /* -------------------------------------------------------------------------- */
- /* cholmod_nested_dissection */
- /* -------------------------------------------------------------------------- */
-@@ -163,4 +168,8 @@ SuiteSparse_long cholmod_collapse_septre
- SuiteSparse_long cholmod_l_collapse_septree (size_t, size_t, double, size_t,
-     SuiteSparse_long *, SuiteSparse_long *, cholmod_common *) ;
- 
-+#ifdef __cplusplus
-+}
-+#endif
-+
- #endif
---- SuiteSparse/CHOLMOD/Include/cholmod_supernodal.h.orig	2014-03-21 20:11:21.000000000 +0100
-+++ SuiteSparse/CHOLMOD/Include/cholmod_supernodal.h	2023-01-07 17:21:07.966879028 +0100
-@@ -49,6 +49,11 @@
- 
- #include "cholmod_core.h"
- 
-+/* make it easy for C++ programs to include CHOLMOD */
-+#ifdef __cplusplus
-+extern "C" {
-+#endif
-+
- /* -------------------------------------------------------------------------- */
- /* cholmod_super_symbolic */
- /* -------------------------------------------------------------------------- */
-@@ -169,4 +174,8 @@ int cholmod_super_ltsolve
- int cholmod_l_super_ltsolve (cholmod_factor *, cholmod_dense *, cholmod_dense *,
-     cholmod_common *) ;
- 
-+#ifdef __cplusplus
-+}
-+#endif
-+
- #endif
---- SuiteSparse/CHOLMOD/Include/cholmod.h.orig	2014-09-16 22:27:35.000000000 +0200
-+++ SuiteSparse/CHOLMOD/Include/cholmod.h	2023-01-08 20:50:28.674096207 +0100
-@@ -75,11 +75,6 @@
- #ifndef CHOLMOD_H
- #define CHOLMOD_H
- 
--/* make it easy for C++ programs to include CHOLMOD */
--#ifdef __cplusplus
--extern "C" {
--#endif
--
- /* assume large file support.  If problems occur, compile with -DNLARGEFILE */
- #include "cholmod_io64.h"
- 
-@@ -123,8 +118,4 @@ extern "C" {
- #include "cholmod_gpu.h"
- #endif
- 
--#ifdef __cplusplus
--}
--#endif
--
- #endif
---- SuiteSparse/CSparse/Include/cs.h.orig	2017-09-12 18:46:19.000000000 +0200
-+++ SuiteSparse/CSparse/Include/cs.h	2023-01-12 18:45:36.412409364 +0100
-@@ -14,6 +14,10 @@
- #define CS_DATE "Sept 12, 2017"       /* CSparse release date */
- #define CS_COPYRIGHT "Copyright (c) Timothy A. Davis, 2006-2016"
- 
-+#ifdef __cplusplus
-+extern "C" {
-+#endif
-+
+ int createRelativeMapOnDevice ( int64_t *d_Map, int64_t *d_Ls, 
+--- SuiteSparse-6.0.1/CSparse/Include/cs.h.orig	2022-11-14 01:04:25.000000000 +0100
++++ SuiteSparse-6.0.1/CSparse/Include/cs.h	2025-06-29 12:21:36.111550178 +0200
+@@ -12,6 +12,11 @@
  #ifdef MATLAB_MEX_FILE
- #undef csi
- #define csi mwSignedIndex
-@@ -149,4 +153,9 @@ csn *cs_ndone (csn *N, cs *C, void *w, v
+ #include "mex.h"
+ #endif
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
+ #define CS_VER 4  /* CSparse Version */
+ #define CS_SUBVER 0
+ #define CS_SUBSUB 0
+@@ -149,4 +154,9 @@ csn *cs_ndone (csn *N, cs *C, void *w, v
  #define CS_MARK(w,j) { w [j] = CS_FLIP (w [j]) ; }
  #define CS_CSC(A) (A && (A->nz == -1))
  #define CS_TRIPLET(A) (A && (A->nz >= 0))
@@ -422,30 +189,28 @@
 +#endif
 +
  #endif
---- SuiteSparse/CXSparse/Include/cs.h.orig	2014-03-25 15:57:05.000000000 +0100
-+++ SuiteSparse/CXSparse/Include/cs.h	2023-01-07 20:23:44.164190879 +0100
-@@ -14,7 +14,6 @@
- #include <complex>
- typedef std::complex<double> cs_complex_t ;
- #endif
--extern "C" {
- #else
- #ifndef NCOMPLEX
- #include <complex.h>
-@@ -34,6 +33,10 @@ extern "C" {
- #define cs_long_t_id    SuiteSparse_long_id
- #define cs_long_t_max   SuiteSparse_long_max
+--- SuiteSparse-6.0.1/CXSparse/Include/cs.h.orig	2022-11-14 01:04:25.000000000 +0100
++++ SuiteSparse-6.0.1/CXSparse/Include/cs.h	2025-06-29 12:23:59.074109017 +0200
+@@ -26,6 +26,8 @@
+ #ifndef _CXS_H
+ #define _CXS_H
  
-+#ifdef __cplusplus
-+extern "C" {
-+#endif
++#include "SuiteSparse_config.h"
 +
- /* -------------------------------------------------------------------------- */
- /* double/int version of CXSparse */
- /* -------------------------------------------------------------------------- */
---- SuiteSparse/KLU/Include/klu.h.orig	2014-03-21 20:21:26.000000000 +0100
-+++ SuiteSparse/KLU/Include/klu.h	2023-01-07 19:11:09.271116694 +0100
-@@ -7,15 +7,15 @@
+ #ifdef __cplusplus
+ #ifndef NCOMPLEX
+ #include <complex>
+@@ -46,7 +48,6 @@ extern "C" {
+ #define CS_COPYRIGHT "Copyright (c) Timothy A. Davis, 2006-2022"
+ #define CXSPARSE
+ 
+-#include "SuiteSparse_config.h"
+ #define cs_long_t       int64_t
+ #define cs_long_t_id    "%" PRId64
+ #define cs_long_t_max   INT64_MAX
+--- SuiteSparse-6.0.1/KLU/Include/klu.h.orig	2022-11-14 01:04:25.000000000 +0100
++++ SuiteSparse-6.0.1/KLU/Include/klu.h	2025-06-29 12:24:26.447294057 +0200
+@@ -13,15 +13,15 @@
  #ifndef _KLU_H
  #define _KLU_H
  
@@ -465,72 +230,88 @@
  /* -------------------------------------------------------------------------- */
  /* Symbolic object - contains the pre-ordering computed by klu_analyze */
  /* -------------------------------------------------------------------------- */
---- SuiteSparse/LDL/Include/ldl.h.orig	2016-05-04 22:45:33.000000000 +0200
-+++ SuiteSparse/LDL/Include/ldl.h	2023-01-11 20:43:28.728830972 +0100
-@@ -38,6 +38,10 @@
+--- SuiteSparse-6.0.1/LDL/Include/ldl.h.orig	2022-11-14 01:04:25.000000000 +0100
++++ SuiteSparse-6.0.1/LDL/Include/ldl.h	2025-06-29 12:25:09.873725462 +0200
+@@ -9,6 +9,10 @@
  
- #endif
+ #include "SuiteSparse_config.h"
  
 +#ifdef __cplusplus
 +extern "C" {
 +#endif
 +
- /* ========================================================================== */
- /* === int version ========================================================== */
- /* ========================================================================== */
-@@ -110,3 +114,6 @@ SuiteSparse_long ldl_l_valid_matrix ( Su
- #define LDL_SUBSUB_VERSION 6
+ #ifdef LDL_LONG
+ #define LDL_int int64_t
+ #define LDL_ID  "%" PRId64
+@@ -123,3 +127,6 @@ int64_t ldl_l_valid_matrix ( int64_t n,
+ #define LDL_VERSION_CODE(main,sub) ((main) * 1000 + (sub))
  #define LDL_VERSION LDL_VERSION_CODE(LDL_MAIN_VERSION,LDL_SUB_VERSION)
  
 +#ifdef __cplusplus
 +}
 +#endif
---- SuiteSparse/RBio/Include/RBio.h.orig	2014-03-21 20:22:01.000000000 +0100
-+++ SuiteSparse/RBio/Include/RBio.h	2023-01-07 20:55:56.607055271 +0100
-@@ -46,10 +46,6 @@
+--- SuiteSparse-6.0.1/RBio/Include/RBio.h.orig	2022-11-14 01:04:25.000000000 +0100
++++ SuiteSparse-6.0.1/RBio/Include/RBio.h	2025-06-29 12:26:00.230119325 +0200
+@@ -47,12 +47,12 @@
+ /* include files */
+ /* -------------------------------------------------------------------------- */
  
- #include "SuiteSparse_config.h"
- 
--#ifdef __cplusplus
--extern "C" {
--#endif
--
- #include <stddef.h>
- #include <string.h>
- #include <stdio.h>
-@@ -60,6 +56,10 @@ extern "C" {
- #include "mex.h"
++#include "SuiteSparse_config.h"
++
+ #ifdef __cplusplus
+ extern "C" {
  #endif
+ 
+-#include "SuiteSparse_config.h"
+-
+ /* -------------------------------------------------------------------------- */
+ /* error codes */
+ /* -------------------------------------------------------------------------- */
+--- SuiteSparse-6.0.1/SPEX/Include/SPEX.h.orig	2022-11-14 01:04:25.000000000 +0100
++++ SuiteSparse-6.0.1/SPEX/Include/SPEX.h	2025-06-29 12:29:05.822447218 +0200
+@@ -255,6 +255,10 @@
+ #include <assert.h>
+ #include "SuiteSparse_config.h"
  
 +#ifdef __cplusplus
 +extern "C" {
 +#endif
 +
- /* -------------------------------------------------------------------------- */
- /* error codes */
- /* -------------------------------------------------------------------------- */
---- SuiteSparse/SPQR/Include/SuiteSparseQR_C.h.orig	2012-05-28 01:00:20.000000000 +0200
-+++ SuiteSparse/SPQR/Include/SuiteSparseQR_C.h	2023-01-07 21:28:30.366470847 +0100
-@@ -11,7 +11,6 @@
+ //------------------------------------------------------------------------------
+ // Version
+ //------------------------------------------------------------------------------
+@@ -952,5 +956,9 @@ SPEX_info SPEX_Left_LU_solve         //
+     const SPEX_options* option
+ ) ;
+ 
++#ifdef __cplusplus
++}
++#endif
++
+ #endif
+ 
+--- SuiteSparse-6.0.1/SPQR/Include/SuiteSparseQR_C.h.orig	2022-11-14 01:04:25.000000000 +0100
++++ SuiteSparse-6.0.1/SPQR/Include/SuiteSparseQR_C.h	2025-06-29 12:31:45.671581241 +0200
+@@ -10,6 +10,8 @@
+ #ifndef SUITESPARSEQR_C_H
+ #define SUITESPARSEQR_C_H
+ 
++#include "cholmod.h"
++
+ #ifdef __cplusplus
  /* If included by a C++ program, the Complex type is std::complex<double> */
  #include <complex>
- #define Complex std::complex<double>
--extern "C" {
+@@ -17,7 +19,6 @@
+ extern "C" {
  #endif
  
- #include "cholmod.h"
-@@ -22,6 +21,8 @@ extern "C" {
-    size n, which the C code must then interpret as double array of size 2*n,
-    with real and imaginary parts interleaved. */
- #define Complex double
-+#else
-+extern "C" {
- #endif
+-#include "cholmod.h"
+ #include "SuiteSparseQR_definitions.h"
  
- /* ========================================================================== */
---- SuiteSparse/SPQR/Include/SuiteSparseQR.hpp.orig	2023-01-16 17:36:42.955859665 +0100
-+++ SuiteSparse/SPQR/Include/SuiteSparseQR.hpp	2023-01-16 17:37:05.512404132 +0100
-@@ -15,11 +15,8 @@
+ #ifndef __cplusplus
+--- SuiteSparse-6.0.1/SPQR/Include/SuiteSparseQR.hpp.orig	2022-11-14 01:04:25.000000000 +0100
++++ SuiteSparse-6.0.1/SPQR/Include/SuiteSparseQR.hpp	2025-06-29 12:32:21.588053332 +0200
+@@ -18,11 +18,8 @@
  #include <cublas_v2.h>
  #endif
  #define SUITESPARSE_GPU_EXTERN_ON
@@ -542,52 +323,33 @@
  #undef SUITESPARSE_GPU_EXTERN_ON
  
  // =============================================================================
---- SuiteSparse/SPQR/Include/spqr.hpp.orig	2014-03-19 20:39:23.000000000 +0100
-+++ SuiteSparse/SPQR/Include/spqr.hpp	2023-01-07 21:29:30.076147372 +0100
-@@ -1015,9 +1015,7 @@ inline Long spqr_mult (Long a, Long b, i
- // To compile SuiteSparseQR with 64-bit BLAS, use -DBLAS64.  See also
- // CHOLMOD/Include/cholmod_blas.h
+--- SuiteSparse-6.0.1/UMFPACK/Include/umfpack.h.orig	2022-11-14 01:04:25.000000000 +0100
++++ SuiteSparse-6.0.1/UMFPACK/Include/umfpack.h	2025-06-29 12:52:00.021669209 +0200
+@@ -18,6 +18,13 @@
+ #ifndef UMFPACK_H
+ #define UMFPACK_H
  
--extern "C" {
- #include "cholmod_blas.h"
--}
- 
- #undef CHECK_BLAS_INT
- #undef EQ
---- SuiteSparse/UMFPACK/Include/umfpack.h.orig	2014-03-21 20:16:08.000000000 +0100
-+++ SuiteSparse/UMFPACK/Include/umfpack.h	2023-01-07 21:59:54.662929404 +0100
-@@ -22,10 +22,6 @@
- /* Make it easy for C++ programs to include UMFPACK */
- /* -------------------------------------------------------------------------- */
- 
--#ifdef __cplusplus
--extern "C" {
--#endif
--
- #include "SuiteSparse_config.h"
- 
- /* -------------------------------------------------------------------------- */
-@@ -42,6 +38,13 @@ extern "C" {
- /* User-callable routines */
- /* -------------------------------------------------------------------------- */
- 
-+/* AMD */
++//------------------------------------------------------------------------------
++// include files for other packages: SuiteSparse_config and AMD
++//------------------------------------------------------------------------------
++
++#include "SuiteSparse_config.h"
 +#include "amd.h"
 +
-+#ifdef __cplusplus
-+extern "C" {
-+#endif
-+
- /* Primary routines: */
- #include "umfpack_symbolic.h"
- #include "umfpack_numeric.h"
-@@ -85,9 +88,6 @@ extern "C" {
- #include "umfpack_timer.h"
- #include "umfpack_tictoc.h"
+ /* -------------------------------------------------------------------------- */
+ /* Make it easy for C++ programs to include UMFPACK */
+ /* -------------------------------------------------------------------------- */
+@@ -26,13 +33,6 @@
+ extern "C" {
+ #endif
  
--/* AMD */
+-//------------------------------------------------------------------------------
+-// include files for other packages: SuiteSparse_config and AMD
+-//------------------------------------------------------------------------------
+-
+-#include "SuiteSparse_config.h"
 -#include "amd.h"
 -
- /* global function pointers */
- #include "umfpack_global.h"
- 
+ /* -------------------------------------------------------------------------- */
+ /* size of Info and Control arrays */
+ /* -------------------------------------------------------------------------- */
