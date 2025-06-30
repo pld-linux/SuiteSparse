@@ -121,11 +121,11 @@
  /* ========================================================================== */
  /* === COLAMD version ======================================================= */
  /* ========================================================================== */
---- SuiteSparse-6.0.1/CHOLMOD/Include/cholmod.h.orig	2022-11-14 01:04:25.000000000 +0100
-+++ SuiteSparse-6.0.1/CHOLMOD/Include/cholmod.h	2025-06-29 11:57:34.549359791 +0200
+--- SuiteSparse-6.0.3/CHOLMOD/Include/cholmod.h.orig	2022-12-25 04:37:26.000000000 +0100
++++ SuiteSparse-6.0.3/CHOLMOD/Include/cholmod.h	2025-06-30 06:25:16.729303259 +0200
 @@ -102,11 +102,6 @@
  #define CHOLMOD_SUB_VERSION    0
- #define CHOLMOD_SUBSUB_VERSION 1
+ #define CHOLMOD_SUBSUB_VERSION 2
  
 -/* make it easy for C++ programs to include CHOLMOD */
 -#ifdef __cplusplus

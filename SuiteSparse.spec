@@ -7,26 +7,26 @@
 %bcond_without	static_libs	# static libraries
 
 # main package version
-%define		suite_ver	6.0.1
+%define		suite_ver	6.0.3
 # see */Include/*.h /VER(SION)?_CODE, C*Sparse/Include/cs.h /CS_VER Mongoose/Include/Mongoose_Version.hpp /Mongoose_VERSION_
-%define		amd_ver		3.0.0
-%define		btf_ver		2.0.0
-%define		camd_ver	3.0.0
-%define		ccolamd_ver	3.0.0
-%define		colamd_ver	3.0.0
-%define		cholmod_ver	4.0.1
+%define		amd_ver		3.0.2
+%define		btf_ver		2.0.2
+%define		camd_ver	3.0.2
+%define		ccolamd_ver	3.0.2
+%define		colamd_ver	3.0.2
+%define		cholmod_ver	4.0.2
 %define		csparse_ver	4.0.0
-%define		cxsparse_ver	4.0.0
-%define		klu_ver		2.0.0
-%define		ldl_ver		3.0.0
-%define		rbio_ver	3.0.0
-%define		spex_ver	2.0.0
-%define		spqr_ver	3.0.1
-%define		umfpack_ver	6.0.1
-%define		gpuruntime_ver	2.0.0
-%define		gpuqrengine_ver	2.0.0
-%define		mongoose_ver	3.0.0
-# GraphBLAS version 7.3.2, but disabled here, newer version is built from GraphBLAS.spec
+%define		cxsparse_ver	4.0.2
+%define		klu_ver		2.0.2
+%define		ldl_ver		3.0.2
+%define		rbio_ver	3.0.2
+%define		spex_ver	2.0.2
+%define		spqr_ver	3.0.2
+%define		umfpack_ver	6.0.2
+%define		gpuruntime_ver	2.0.2
+%define		gpuqrengine_ver	2.0.2
+%define		mongoose_ver	3.0.3
+# GraphBLAS version 7.4.0, but disabled here, newer version is built from GraphBLAS.spec
 
 Summary:	A Suite of Sparse matrix packages
 Summary(pl.UTF-8):	Zbiór pakietów do operacji na macierzach rzadkich
@@ -37,7 +37,7 @@ License:	LGPL v2.1+, GPL v2+
 Group:		Libraries
 #Source0Download: https://github.com/DrTimothyAldenDavis/SuiteSparse/releases
 Source0:	https://github.com/DrTimothyAldenDavis/SuiteSparse/archive/v%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	3bb660ac217791c7e9fabac944c8ee07
+# Source0-md5:	fc33148a25cd6076c8070b0bbf07eb5e
 Patch0:		%{name}-link.patch
 Patch1:		%{name}-amdf77.patch
 Patch2:		%{name}-externc.patch
@@ -530,6 +530,49 @@ Static CHOLMOD library.
 %description CHOLMOD-static -l pl.UTF-8
 Statyczna biblioteka CHOLMOD.
 
+%package CHOLMOD_CUDA
+Summary:	CHOLMOD_CUDA: GPU utilities for CHOLMOD
+Summary(pl.UTF-8):	CHOLMOD_CUDA - narządzia GPU dla CHOLMOD
+Version:	%{cholmod_ver}
+License:	GPL v2+
+Group:		Libraries
+Requires:	%{name}-config-libs = %{suite_ver}-%{release}
+
+%description CHOLMOD_CUDA
+CHOLMOD_CUDA: GPU utilities for CHOLMOD.
+
+%description CHOLMOD_CUDA -l pl.UTF-8
+CHOLMOD_CUDA - narządzia GPU dla CHOLMOD.
+
+%package CHOLMOD_CUDA-devel
+Summary:	Development files for CHOLMOD_CUDA library
+Summary(pl.UTF-8):	Pliki programistyczne biblioteki CHOLMOD_CUDA
+Version:	%{cholmod_ver}
+License:	GPL v2+
+Group:		Development/Libraries
+Requires:	%{name}-config-devel = %{suite_ver}-%{release}
+Requires:	%{name}-CHOLMOD_CUDA = %{cholmod_ver}-%{release}
+
+%description CHOLMOD_CUDA-devel
+Development files for CHOLMOD_CUDA library.
+
+%description CHOLMOD_CUDA-devel -l pl.UTF-8
+Pliki programistyczne biblioteki CHOLMOD_CUDA.
+
+%package CHOLMOD_CUDA-static
+Summary:	Static CHOLMOD_CUDA library
+Summary(pl.UTF-8):	Statyczna biblioteka CHOLMOD_CUDA
+Version:	%{cholmod_ver}
+License:	GPL v2+
+Group:		Development/Libraries
+Requires:	%{name}-CHOLMOD_CUDA-devel = %{cholmod_ver}-%{release}
+
+%description CHOLMOD_CUDA-static
+Static CHOLMOD_CUDA library.
+
+%description CHOLMOD_CUDA-static -l pl.UTF-8
+Statyczna biblioteka CHOLMOD_CUDA.
+
 %package CXSparse
 Summary:	CXSparse: extended version of a concise sparse matrix package
 Summary(pl.UTF-8):	CXSparse - rozszerzona wersja zwięzłego pakietu do macierzy rzadkich
@@ -680,10 +723,10 @@ Group:		Development/Libraries
 Requires:	%{name}-KLU_CHOLMOD-devel = %{klu_ver}-%{release}
 
 %description KLU_CHOLMOD-static
-Static KLU library.
+Static KLU_CHOLMOD library.
 
 %description KLU_CHOLMOD-static -l pl.UTF-8
-Statyczna biblioteka KLU.
+Statyczna biblioteka KLU_CHOLMOD.
 
 %package LDL
 Summary:	LDL: a simple LDL^T factorization for sparse matrices
@@ -917,6 +960,50 @@ Static SPQR library.
 
 %description SPQR-static -l pl.UTF-8
 Statyczna biblioteka SPQR.
+
+%package SPQR_CUDA
+Summary:	SPQRGPU: compute the QR factorization on the GPU
+Summary(pl.UTF-8):	SPQRGPU - obliczanie rozkładu QR na GPU
+Version:	%{spqr_ver}
+License:	GPL v2+
+Group:		Libraries
+Requires:	%{name}-CHOLMOD = %{cholmod_ver}-%{release}
+
+%description SPQR_CUDA
+SPQRGPU: compute the QR factorization on the GPU.
+
+%description SPQR_CUDA -l pl.UTF-8
+SPQRGPU - obliczanie rozkładu QR na GPU.
+
+%package SPQR_CUDA-devel
+Summary:	Development files for SPQR_CUDA library
+Summary(pl.UTF-8):	Pliki programistyczne biblioteki SPQR_CUDA
+Version:	%{spqr_ver}
+License:	GPL v2+
+Group:		Development/Libraries
+Requires:	%{name}-CHOLMOD-devel = %{cholmod_ver}-%{release}
+Requires:	%{name}-SPQR_CUDA = %{spqr_ver}-%{release}
+Requires:	%{name}-config-devel = %{suite_ver}-%{release}
+
+%description SPQR_CUDA-devel
+Development files for SPQR_CUDA library.
+
+%description SPQR_CUDA-devel -l pl.UTF-8
+Pliki programistyczne biblioteki SPQR_CUDA.
+
+%package SPQR_CUDA-static
+Summary:	Static SPQR_CUDA library
+Summary(pl.UTF-8):	Statyczna biblioteka SPQR_CUDA
+Version:	%{spqr_ver}
+License:	GPL v2+
+Group:		Development/Libraries
+Requires:	%{name}-SPQR_CUDA-devel = %{spqr_ver}-%{release}
+
+%description SPQR_CUDA-static
+Static SPQR_CUDA library.
+
+%description SPQR_CUDA-static -l pl.UTF-8
+Statyczna biblioteka SPQR_CUDA.
 
 %package UMFPACK
 Summary:	UMFPACK: sparse multifrontal LU factorization
@@ -1176,6 +1263,9 @@ rm -rf $RPM_BUILD_ROOT
 %post	CHOLMOD -p /sbin/ldconfig
 %postun	CHOLMOD -p /sbin/ldconfig
 
+%post	CHOLMOD_CUDA -p /sbin/ldconfig
+%postun	CHOLMOD_CUDA -p /sbin/ldconfig
+
 %post	CXSparse -p /sbin/ldconfig
 %postun	CXSparse -p /sbin/ldconfig
 
@@ -1196,6 +1286,9 @@ rm -rf $RPM_BUILD_ROOT
 
 %post	SPQR -p /sbin/ldconfig
 %postun	SPQR -p /sbin/ldconfig
+
+%post	SPQR_CUDA -p /sbin/ldconfig
+%postun	SPQR_CUDA -p /sbin/ldconfig
 
 %post	UMFPACK -p /sbin/ldconfig
 %postun	UMFPACK -p /sbin/ldconfig
@@ -1349,12 +1442,29 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libcholmod.so
 %{_includedir}/suitesparse/cholmod.h
 %{_libdir}/cmake/SuiteSparse/FindCHOLMOD.cmake
-%{_libdir}/cmake/SuiteSparse/FindCHOLMOD_CUDA.cmake
 
 %if %{with static_libs}
 %files CHOLMOD-static
 %defattr(644,root,root,755)
 %{_libdir}/libcholmod.a
+%endif
+
+%if %{with cuda}
+%files CHOLMOD_CUDA
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/libcholmod_cuda.so.*.*.*
+%ghost %{_libdir}/libcholmod_cuda.so.4
+
+%files CHOLMOD_CUDA-devel
+%defattr(644,root,root,755)
+%{_libdir}/libcholmod_cuda.so
+%{_libdir}/cmake/SuiteSparse/FindCHOLMOD_CUDA.cmake
+
+%if %{with static_libs}
+%files CHOLMOD_CUDA-static
+%defattr(644,root,root,755)
+%{_libdir}/libcholmod_cuda_static.a
+%endif
 %endif
 
 %files CXSparse
@@ -1397,7 +1507,7 @@ rm -rf $RPM_BUILD_ROOT
 %files KLU_CHOLMOD
 %defattr(644,root,root,755)
 %doc KLU/User/README.txt
-%attr(755,root,root) %{_libdir}/libklu_cholmod.so.2.0.0
+%attr(755,root,root) %{_libdir}/libklu_cholmod.so.*.*.*
 %ghost %{_libdir}/libklu_cholmod.so.2
 
 %files KLU_CHOLMOD-devel
@@ -1480,12 +1590,29 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/suitesparse/SuiteSparseQR.hpp
 %{_includedir}/suitesparse/SuiteSparseQR*.h
 %{_libdir}/cmake/SuiteSparse/FindSPQR.cmake
-%{_libdir}/cmake/SuiteSparse/FindSPQR_CUDA.cmake
 
 %if %{with static_libs}
 %files SPQR-static
 %defattr(644,root,root,755)
 %{_libdir}/libspqr.a
+%endif
+
+%if %{with cuda}
+%files SPQR_CUDA
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/libspqr_cuda.so.*.*.*
+%ghost %{_libdir}/libspqr_cuda.so.3
+
+%files SPQR_CUDA-devel
+%defattr(644,root,root,755)
+%{_libdir}/libspqr_cuda.so
+%{_libdir}/cmake/SuiteSparse/FindSPQR_CUDA.cmake
+
+%if %{with static_libs}
+%files SPQR_CUDA-static
+%defattr(644,root,root,755)
+%{_libdir}/libspqr_cuda_static.a
+%endif
 %endif
 
 %files UMFPACK
@@ -1511,12 +1638,13 @@ rm -rf $RPM_BUILD_ROOT
 %files GPURuntime
 %defattr(644,root,root,755)
 %doc SuiteSparse_GPURuntime/README.txt
-%attr(755,root,root) %{_libdir}/libsuitesparse_gpuruntime.so.2.0.0
+%attr(755,root,root) %{_libdir}/libsuitesparse_gpuruntime.so.*.*.*
 %ghost %{_libdir}/libsuitesparse_gpuruntime.so.2
 
 %files GPURuntime-devel
 %defattr(644,root,root,755)
 %{_libdir}/libsuitesparse_gpuruntime.so
+%{_includedir}/suitesparse/SuiteSparse_GPURuntime.hpp
 %{_libdir}/cmake/SuiteSparse/FindSuiteSparse_GPURuntime.cmake
 
 %if %{with static_libs}
@@ -1528,12 +1656,13 @@ rm -rf $RPM_BUILD_ROOT
 %files GPUQREngine
 %defattr(644,root,root,755)
 %doc GPUQREngine/README.txt
-%attr(755,root,root) %{_libdir}/libgpuqrengine.so.2.0.0
+%attr(755,root,root) %{_libdir}/libgpuqrengine.so.*.*.*
 %ghost %{_libdir}/libgpuqrengine.so.2
 
 %files GPUQREngine-devel
 %defattr(644,root,root,755)
 %{_libdir}/libgpuqrengine.so
+%{_includedir}/suitesparse/GPUQREngine.hpp
 %{_libdir}/cmake/SuiteSparse/FindGPUQREngine.cmake
 
 %if %{with static_libs}
