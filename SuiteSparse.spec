@@ -7,26 +7,26 @@
 %bcond_without	static_libs	# static libraries
 
 # main package version
-%define		suite_ver	6.0.3
+%define		suite_ver	7.1.0
 # see */Include/*.h /VER(SION)?_CODE, C*Sparse/Include/cs.h /CS_VER Mongoose/Include/Mongoose_Version.hpp /Mongoose_VERSION_
-%define		amd_ver		3.0.2
-%define		btf_ver		2.0.2
-%define		camd_ver	3.0.2
-%define		ccolamd_ver	3.0.2
-%define		colamd_ver	3.0.2
-%define		cholmod_ver	4.0.2
-%define		csparse_ver	4.0.0
-%define		cxsparse_ver	4.0.2
-%define		klu_ver		2.0.2
-%define		ldl_ver		3.0.2
-%define		rbio_ver	3.0.2
-%define		spex_ver	2.0.2
-%define		spqr_ver	3.0.2
-%define		umfpack_ver	6.0.2
-%define		gpuruntime_ver	2.0.2
-%define		gpuqrengine_ver	2.0.2
-%define		mongoose_ver	3.0.3
-# GraphBLAS version 7.4.0, but disabled here, newer version is built from GraphBLAS.spec
+%define		amd_ver		3.0.4
+%define		btf_ver		2.0.4
+%define		camd_ver	3.0.4
+%define		ccolamd_ver	3.0.4
+%define		colamd_ver	3.0.4
+%define		cholmod_ver	4.0.4
+%define		csparse_ver	4.0.4
+%define		cxsparse_ver	4.0.4
+%define		klu_ver		2.0.4
+%define		ldl_ver		3.0.4
+%define		rbio_ver	4.0.0
+%define		spex_ver	2.0.4
+%define		spqr_ver	3.0.4
+%define		umfpack_ver	6.1.1
+%define		gpuruntime_ver	2.0.4
+%define		gpuqrengine_ver	2.0.4
+%define		mongoose_ver	3.0.5
+# GraphBLAS version 8.0.2, but disabled here, newer version is built from GraphBLAS.spec
 
 Summary:	A Suite of Sparse matrix packages
 Summary(pl.UTF-8):	Zbiór pakietów do operacji na macierzach rzadkich
@@ -37,8 +37,7 @@ License:	LGPL v2.1+, GPL v2+
 Group:		Libraries
 #Source0Download: https://github.com/DrTimothyAldenDavis/SuiteSparse/releases
 Source0:	https://github.com/DrTimothyAldenDavis/SuiteSparse/archive/v%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	fc33148a25cd6076c8070b0bbf07eb5e
-Patch0:		%{name}-link.patch
+# Source0-md5:	c0cd0120ee8da2167dfea4a5fee87d44
 Patch1:		%{name}-amdf77.patch
 Patch2:		%{name}-externc.patch
 Patch3:		%{name}-ILP32.patch
@@ -1206,7 +1205,6 @@ Statyczna biblioteka Mongoose.
 
 %prep
 %setup -q
-%patch -P0 -p1
 %patch -P1 -p1
 %patch -P2 -p1
 %ifnarch %{x8664} aarch64 alpha mips64 ppc64 s390x sparc64
@@ -1235,6 +1233,12 @@ for mod in %{modules} ; do
 %{__make} -C ${mod}/build install \
 	DESTDIR=$RPM_BUILD_ROOT
 done
+
+%if %{without cuda}
+# stubs
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/lib{cholmod,spqr}_cuda.*
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/cmake/SuiteSparse/Find{CHOLMOD,SPQR}_CUDA.cmake
+%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -1308,14 +1312,19 @@ rm -rf $RPM_BUILD_ROOT
 %files config-libs
 %defattr(644,root,root,755)
 %doc SuiteSparse_config/README.txt
-%attr(755,root,root) %{_libdir}/libsuitesparseconfig.so.*.*.*
-%ghost %{_libdir}/libsuitesparseconfig.so.6
+%{_libdir}/libsuitesparseconfig.so.*.*.*
+%ghost %{_libdir}/libsuitesparseconfig.so.7
 
 %files config-devel
 %defattr(644,root,root,755)
 %{_libdir}/libsuitesparseconfig.so
 %dir %{_libdir}/cmake/SuiteSparse
 %{_libdir}/cmake/SuiteSparse/FindSuiteSparse_config.cmake
+%{_libdir}/cmake/SuiteSparse/SuiteSparseBLAS*.cmake
+%{_libdir}/cmake/SuiteSparse/SuiteSparseLAPACK.cmake
+%{_libdir}/cmake/SuiteSparse/SuiteSparsePolicy.cmake
+%{_libdir}/cmake/SuiteSparse/SuiteSparseReport.cmake
+%{_libdir}/cmake/SuiteSparse/SuiteSparse_ssize_t.cmake
 
 %if %{with static_libs}
 %files config-static
@@ -1326,7 +1335,7 @@ rm -rf $RPM_BUILD_ROOT
 %files AMD
 %defattr(644,root,root,755)
 %doc AMD/README.txt AMD/Doc/{ChangeLog,License.txt}
-%attr(755,root,root) %{_libdir}/libamd.so.*.*.*
+%{_libdir}/libamd.so.*.*.*
 %ghost %{_libdir}/libamd.so.3
 
 %files AMD-devel
@@ -1344,7 +1353,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files AMD-fortran
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libamdf77.so.*.*.*
+%{_libdir}/libamdf77.so.*.*.*
 %ghost %{_libdir}/libamdf77.so.3
 
 %files AMD-fortran-devel
@@ -1360,7 +1369,7 @@ rm -rf $RPM_BUILD_ROOT
 %files BTF
 %defattr(644,root,root,755)
 %doc BTF/README.txt BTF/Doc/ChangeLog
-%attr(755,root,root) %{_libdir}/libbtf.so.*.*.*
+%{_libdir}/libbtf.so.*.*.*
 %ghost %{_libdir}/libbtf.so.2
 
 %files BTF-devel
@@ -1378,7 +1387,7 @@ rm -rf $RPM_BUILD_ROOT
 %files CAMD
 %defattr(644,root,root,755)
 %doc CAMD/README.txt CAMD/Doc/{ChangeLog,License.txt}
-%attr(755,root,root) %{_libdir}/libcamd.so.*.*.*
+%{_libdir}/libcamd.so.*.*.*
 %ghost %{_libdir}/libcamd.so.3
 
 %files CAMD-devel
@@ -1397,7 +1406,7 @@ rm -rf $RPM_BUILD_ROOT
 %files CCOLAMD
 %defattr(644,root,root,755)
 %doc CCOLAMD/README.txt CCOLAMD/Doc/ChangeLog
-%attr(755,root,root) %{_libdir}/libccolamd.so.*.*.*
+%{_libdir}/libccolamd.so.*.*.*
 %ghost %{_libdir}/libccolamd.so.3
 
 %files CCOLAMD-devel
@@ -1415,7 +1424,7 @@ rm -rf $RPM_BUILD_ROOT
 %files COLAMD
 %defattr(644,root,root,755)
 %doc COLAMD/README.txt COLAMD/Doc/ChangeLog
-%attr(755,root,root) %{_libdir}/libcolamd.so.*.*.*
+%{_libdir}/libcolamd.so.*.*.*
 %ghost %{_libdir}/libcolamd.so.3
 
 %files COLAMD-devel
@@ -1433,7 +1442,7 @@ rm -rf $RPM_BUILD_ROOT
 %files CHOLMOD
 %defattr(644,root,root,755)
 %doc CHOLMOD/README.txt CHOLMOD/Doc/ChangeLog
-%attr(755,root,root) %{_libdir}/libcholmod.so.*.*.*
+%{_libdir}/libcholmod.so.*.*.*
 %ghost %{_libdir}/libcholmod.so.4
 
 %files CHOLMOD-devel
@@ -1452,7 +1461,7 @@ rm -rf $RPM_BUILD_ROOT
 %if %{with cuda}
 %files CHOLMOD_CUDA
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libcholmod_cuda.so.*.*.*
+%{_libdir}/libcholmod_cuda.so.*.*.*
 %ghost %{_libdir}/libcholmod_cuda.so.4
 
 %files CHOLMOD_CUDA-devel
@@ -1470,7 +1479,7 @@ rm -rf $RPM_BUILD_ROOT
 %files CXSparse
 %defattr(644,root,root,755)
 %doc CXSparse/README.txt CXSparse/Doc/{ChangeLog,License.txt}
-%attr(755,root,root) %{_libdir}/libcxsparse.so.*.*.*
+%{_libdir}/libcxsparse.so.*.*.*
 %ghost %{_libdir}/libcxsparse.so.4
 
 %files CXSparse-devel
@@ -1488,7 +1497,7 @@ rm -rf $RPM_BUILD_ROOT
 %files KLU
 %defattr(644,root,root,755)
 %doc KLU/README.txt KLU/Doc/ChangeLog
-%attr(755,root,root) %{_libdir}/libklu.so.*.*.*
+%{_libdir}/libklu.so.*.*.*
 %ghost %{_libdir}/libklu.so.2
 
 %files KLU-devel
@@ -1507,7 +1516,7 @@ rm -rf $RPM_BUILD_ROOT
 %files KLU_CHOLMOD
 %defattr(644,root,root,755)
 %doc KLU/User/README.txt
-%attr(755,root,root) %{_libdir}/libklu_cholmod.so.*.*.*
+%{_libdir}/libklu_cholmod.so.*.*.*
 %ghost %{_libdir}/libklu_cholmod.so.2
 
 %files KLU_CHOLMOD-devel
@@ -1525,7 +1534,7 @@ rm -rf $RPM_BUILD_ROOT
 %files LDL
 %defattr(644,root,root,755)
 %doc LDL/README.txt LDL/Doc/ChangeLog
-%attr(755,root,root) %{_libdir}/libldl.so.*.*.*
+%{_libdir}/libldl.so.*.*.*
 %ghost %{_libdir}/libldl.so.3
 
 %files LDL-devel
@@ -1544,8 +1553,8 @@ rm -rf $RPM_BUILD_ROOT
 %files RBio
 %defattr(644,root,root,755)
 %doc RBio/README.txt RBio/Doc/{ChangeLog,License.txt}
-%attr(755,root,root) %{_libdir}/librbio.so.*.*.*
-%ghost %{_libdir}/librbio.so.3
+%{_libdir}/librbio.so.*.*.*
+%ghost %{_libdir}/librbio.so.4
 
 %files RBio-devel
 %defattr(644,root,root,755)
@@ -1562,7 +1571,7 @@ rm -rf $RPM_BUILD_ROOT
 %files SPEX
 %defattr(644,root,root,755)
 %doc SPEX/README.md
-%attr(755,root,root) %{_libdir}/libspex.so.*.*.*
+%{_libdir}/libspex.so.*.*.*
 %ghost %{_libdir}/libspex.so.2
 
 %files SPEX-devel
@@ -1580,7 +1589,7 @@ rm -rf $RPM_BUILD_ROOT
 %files SPQR
 %defattr(644,root,root,755)
 %doc SPQR/README.txt SPQR/Doc/ChangeLog
-%attr(755,root,root) %{_libdir}/libspqr.so.*.*.*
+%{_libdir}/libspqr.so.*.*.*
 %ghost %{_libdir}/libspqr.so.3
 
 %files SPQR-devel
@@ -1600,7 +1609,7 @@ rm -rf $RPM_BUILD_ROOT
 %if %{with cuda}
 %files SPQR_CUDA
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libspqr_cuda.so.*.*.*
+%{_libdir}/libspqr_cuda.so.*.*.*
 %ghost %{_libdir}/libspqr_cuda.so.3
 
 %files SPQR_CUDA-devel
@@ -1618,7 +1627,7 @@ rm -rf $RPM_BUILD_ROOT
 %files UMFPACK
 %defattr(644,root,root,755)
 %doc UMFPACK/README.txt UMFPACK/Doc/{ChangeLog,License.txt}
-%attr(755,root,root) %{_libdir}/libumfpack.so.*.*.*
+%{_libdir}/libumfpack.so.*.*.*
 %ghost %{_libdir}/libumfpack.so.6
 
 %files UMFPACK-devel
@@ -1638,7 +1647,7 @@ rm -rf $RPM_BUILD_ROOT
 %files GPURuntime
 %defattr(644,root,root,755)
 %doc SuiteSparse_GPURuntime/README.txt
-%attr(755,root,root) %{_libdir}/libsuitesparse_gpuruntime.so.*.*.*
+%{_libdir}/libsuitesparse_gpuruntime.so.*.*.*
 %ghost %{_libdir}/libsuitesparse_gpuruntime.so.2
 
 %files GPURuntime-devel
@@ -1656,7 +1665,7 @@ rm -rf $RPM_BUILD_ROOT
 %files GPUQREngine
 %defattr(644,root,root,755)
 %doc GPUQREngine/README.txt
-%attr(755,root,root) %{_libdir}/libgpuqrengine.so.*.*.*
+%{_libdir}/libgpuqrengine.so.*.*.*
 %ghost %{_libdir}/libgpuqrengine.so.2
 
 %files GPUQREngine-devel
@@ -1676,7 +1685,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc Mongoose/README.md
 %attr(755,root,root) %{_bindir}/mongoose
-%attr(755,root,root) %{_libdir}/libmongoose.so.*.*.*
+%{_libdir}/libmongoose.so.*.*.*
 %ghost %{_libdir}/libmongoose.so.3
 
 %files Mongoose-devel

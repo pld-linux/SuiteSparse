@@ -24,8 +24,8 @@
  //------------------------------------------------------------------------------
  // string and token handling macros
  //------------------------------------------------------------------------------
---- SuiteSparse-6.0.1/AMD/Include/amd.h.orig	2025-06-29 11:48:25.092336455 +0200
-+++ SuiteSparse-6.0.1/AMD/Include/amd.h	2025-06-29 11:48:27.492323453 +0200
+--- SuiteSparse-7.1.0/AMD/Include/amd.h.orig	2023-06-30 04:06:35.000000000 +0200
++++ SuiteSparse-7.1.0/AMD/Include/amd.h	2026-07-11 16:36:47.020764149 +0200
 @@ -35,13 +35,13 @@
  #ifndef AMD_H
  #define AMD_H
@@ -39,11 +39,11 @@
  
 -#include "SuiteSparse_config.h"
 -
- SUITESPARSE_PUBLIC int amd_order  /* returns AMD_OK, AMD_OK_BUT_JUMBLED,
+ int amd_order  /* returns AMD_OK, AMD_OK_BUT_JUMBLED,
                                      * AMD_INVALID, or AMD_OUT_OF_MEMORY */
  (
---- SuiteSparse-6.0.1/BTF/Include/btf.h.orig	2022-11-14 01:04:25.000000000 +0100
-+++ SuiteSparse-6.0.1/BTF/Include/btf.h	2025-06-29 11:49:10.875421760 +0200
+--- SuiteSparse-7.1.0/BTF/Include/btf.h.orig	2023-06-30 04:06:35.000000000 +0200
++++ SuiteSparse-7.1.0/BTF/Include/btf.h	2026-07-11 16:37:25.157224212 +0200
 @@ -90,13 +90,13 @@
  #ifndef _BTF_H
  #define _BTF_H
@@ -57,11 +57,11 @@
  
 -#include "SuiteSparse_config.h"
 -
- SUITESPARSE_PUBLIC
  int32_t btf_maxtrans    /* returns # of columns matched */
  (
---- SuiteSparse-6.0.1/CAMD/Include/camd.h.orig	2022-11-14 01:04:25.000000000 +0100
-+++ SuiteSparse-6.0.1/CAMD/Include/camd.h	2025-06-29 11:50:04.145133173 +0200
+     /* --- input, not modified: --- */
+--- SuiteSparse-7.1.0/CAMD/Include/camd.h.orig	2023-06-30 04:06:35.000000000 +0200
++++ SuiteSparse-7.1.0/CAMD/Include/camd.h	2026-07-11 16:38:01.223695490 +0200
 @@ -23,13 +23,13 @@
  #ifndef CAMD_H
  #define CAMD_H
@@ -75,7 +75,7 @@
  
 -#include "SuiteSparse_config.h"
 -
- SUITESPARSE_PUBLIC int camd_order /* returns CAMD_OK, CAMD_OK_BUT_JUMBLED,
+ int camd_order /* returns CAMD_OK, CAMD_OK_BUT_JUMBLED,
                               * CAMD_INVALID, or CAMD_OUT_OF_MEMORY */
  (
 --- SuiteSparse-6.0.1/CCOLAMD/Include/ccolamd.h.orig	2022-11-14 01:04:25.000000000 +0100
@@ -121,11 +121,11 @@
  /* ========================================================================== */
  /* === COLAMD version ======================================================= */
  /* ========================================================================== */
---- SuiteSparse-6.0.3/CHOLMOD/Include/cholmod.h.orig	2022-12-25 04:37:26.000000000 +0100
-+++ SuiteSparse-6.0.3/CHOLMOD/Include/cholmod.h	2025-06-30 06:25:16.729303259 +0200
+--- SuiteSparse-7.1.0/CHOLMOD/Include/cholmod.h.orig	2023-06-30 04:06:35.000000000 +0200
++++ SuiteSparse-7.1.0/CHOLMOD/Include/cholmod.h	2026-07-11 16:46:47.400844944 +0200
 @@ -102,11 +102,6 @@
  #define CHOLMOD_SUB_VERSION    0
- #define CHOLMOD_SUBSUB_VERSION 2
+ #define CHOLMOD_SUBSUB_VERSION 4
  
 -/* make it easy for C++ programs to include CHOLMOD */
 -#ifdef __cplusplus
@@ -165,8 +165,8 @@
  int createMapOnDevice ( int64_t *d_Map, int64_t *d_Ls, int64_t psi, int64_t nsrow ); 
  
  int createRelativeMapOnDevice ( int64_t *d_Map, int64_t *d_Ls, 
---- SuiteSparse-6.0.1/CSparse/Include/cs.h.orig	2022-11-14 01:04:25.000000000 +0100
-+++ SuiteSparse-6.0.1/CSparse/Include/cs.h	2025-06-29 12:21:36.111550178 +0200
+--- SuiteSparse-7.1.0/CSparse/Include/cs.h.orig	2023-06-30 04:06:35.000000000 +0200
++++ SuiteSparse-7.1.0/CSparse/Include/cs.h	2026-07-11 16:48:14.433706780 +0200
 @@ -12,6 +12,11 @@
  #ifdef MATLAB_MEX_FILE
  #include "mex.h"
@@ -178,7 +178,7 @@
 +
  #define CS_VER 4  /* CSparse Version */
  #define CS_SUBVER 0
- #define CS_SUBSUB 0
+ #define CS_SUBSUB 4
 @@ -149,4 +154,9 @@ csn *cs_ndone (csn *N, cs *C, void *w, v
  #define CS_MARK(w,j) { w [j] = CS_FLIP (w [j]) ; }
  #define CS_CSC(A) (A && (A->nz == -1))
@@ -189,18 +189,18 @@
 +#endif
 +
  #endif
---- SuiteSparse-6.0.1/CXSparse/Include/cs.h.orig	2022-11-14 01:04:25.000000000 +0100
-+++ SuiteSparse-6.0.1/CXSparse/Include/cs.h	2025-06-29 12:23:59.074109017 +0200
+--- SuiteSparse-7.1.0/CXSparse/Include/cs.h.orig	2023-06-30 04:06:35.000000000 +0200
++++ SuiteSparse-7.1.0/CXSparse/Include/cs.h	2026-07-11 16:49:21.343344299 +0200
 @@ -26,6 +26,8 @@
  #ifndef _CXS_H
  #define _CXS_H
  
 +#include "SuiteSparse_config.h"
 +
- #ifdef __cplusplus
- #ifndef NCOMPLEX
- #include <complex>
-@@ -46,7 +48,6 @@ extern "C" {
+ #if 1
+ #include <complex.h>
+ #define cs_complex_t double _Complex
+@@ -42,7 +44,6 @@ extern "C" {
  #define CS_COPYRIGHT "Copyright (c) Timothy A. Davis, 2006-2022"
  #define CXSPARSE
  
@@ -230,26 +230,24 @@
  /* -------------------------------------------------------------------------- */
  /* Symbolic object - contains the pre-ordering computed by klu_analyze */
  /* -------------------------------------------------------------------------- */
---- SuiteSparse-6.0.1/LDL/Include/ldl.h.orig	2022-11-14 01:04:25.000000000 +0100
-+++ SuiteSparse-6.0.1/LDL/Include/ldl.h	2025-06-29 12:25:09.873725462 +0200
-@@ -9,6 +9,10 @@
+--- SuiteSparse-7.1.0/LDL/Include/ldl.h.orig	2023-06-30 04:06:35.000000000 +0200
++++ SuiteSparse-7.1.0/LDL/Include/ldl.h	2026-07-11 17:09:00.830287803 +0200
+@@ -10,13 +10,13 @@
+ #ifndef LDL_H
+ #define LDL_H
  
- #include "SuiteSparse_config.h"
- 
-+#ifdef __cplusplus
-+extern "C" {
-+#endif
++#include "SuiteSparse_config.h"
 +
+ /* make it easy for C++ programs to include LDL */
+ #ifdef __cplusplus
+ extern "C" {
+ #endif
+ 
+-#include "SuiteSparse_config.h"
+-
  #ifdef LDL_LONG
  #define LDL_int int64_t
  #define LDL_ID  "%" PRId64
-@@ -123,3 +127,6 @@ int64_t ldl_l_valid_matrix ( int64_t n,
- #define LDL_VERSION_CODE(main,sub) ((main) * 1000 + (sub))
- #define LDL_VERSION LDL_VERSION_CODE(LDL_MAIN_VERSION,LDL_SUB_VERSION)
- 
-+#ifdef __cplusplus
-+}
-+#endif
 --- SuiteSparse-6.0.1/RBio/Include/RBio.h.orig	2022-11-14 01:04:25.000000000 +0100
 +++ SuiteSparse-6.0.1/RBio/Include/RBio.h	2025-06-29 12:26:00.230119325 +0200
 @@ -47,12 +47,12 @@
@@ -267,29 +265,6 @@
  /* -------------------------------------------------------------------------- */
  /* error codes */
  /* -------------------------------------------------------------------------- */
---- SuiteSparse-6.0.1/SPEX/Include/SPEX.h.orig	2022-11-14 01:04:25.000000000 +0100
-+++ SuiteSparse-6.0.1/SPEX/Include/SPEX.h	2025-06-29 12:29:05.822447218 +0200
-@@ -255,6 +255,10 @@
- #include <assert.h>
- #include "SuiteSparse_config.h"
- 
-+#ifdef __cplusplus
-+extern "C" {
-+#endif
-+
- //------------------------------------------------------------------------------
- // Version
- //------------------------------------------------------------------------------
-@@ -952,5 +956,9 @@ SPEX_info SPEX_Left_LU_solve         //
-     const SPEX_options* option
- ) ;
- 
-+#ifdef __cplusplus
-+}
-+#endif
-+
- #endif
- 
 --- SuiteSparse-6.0.1/SPQR/Include/SuiteSparseQR_C.h.orig	2022-11-14 01:04:25.000000000 +0100
 +++ SuiteSparse-6.0.1/SPQR/Include/SuiteSparseQR_C.h	2025-06-29 12:31:45.671581241 +0200
 @@ -10,6 +10,8 @@
