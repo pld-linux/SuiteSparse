@@ -1,42 +1,43 @@
---- SuiteSparse-7.1.0/AMD/CMakeLists.txt.orig	2023-06-30 04:06:35.000000000 +0200
-+++ SuiteSparse-7.1.0/AMD/CMakeLists.txt	2026-07-11 15:22:55.838103260 +0200
-@@ -79,10 +79,9 @@ include_directories ( Source Include ${S
+--- SuiteSparse-7.3.1/AMD/CMakeLists.txt.orig	2023-11-03 23:42:14.000000000 +0100
++++ SuiteSparse-7.3.1/AMD/CMakeLists.txt	2026-07-16 19:44:10.506174634 +0200
+@@ -82,10 +82,9 @@ include_directories ( Source Include )
  #-------------------------------------------------------------------------------
  
  if ( NOT NFORTRAN )
 -    file ( GLOB AMD_SOURCES "Source/*.c" "Source/*.f" )
 -else ( )
 -    file ( GLOB AMD_SOURCES "Source/*.c" )
-+    file ( GLOB AMDF77_SOURCES "Source/*.c" "Source/*.f" )
++    file ( GLOB AMDF77_SOURCES "Source/*.f" )
  endif ( )
 +    file ( GLOB AMD_SOURCES "Source/*.c" )
  
- add_library ( amd SHARED ${AMD_SOURCES} )
- set_target_properties ( amd PROPERTIES
-@@ -93,6 +92,15 @@ set_target_properties ( amd PROPERTIES
-     PUBLIC_HEADER "Include/amd.h"
-     WINDOWS_EXPORT_ALL_SYMBOLS ON )
- 
+ add_library ( AMD SHARED ${AMD_SOURCES} )
+ set_target_properties ( AMD PROPERTIES
+@@ -100,6 +99,17 @@ set_target_properties ( AMD PROPERTIES
+ target_include_directories ( AMD
+     INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Include>
+               $<INSTALL_INTERFACE:${SUITESPARSE_INCLUDEDIR}> )
++ 
 +if ( NOT NFORTRAN )
-+    add_library ( amdf77 SHARED ${AMDF77_SOURCES} )
-+    set_target_properties ( amdf77 PROPERTIES
++    add_library ( AMDF77 SHARED ${AMDF77_SOURCES} )
++    set_target_properties ( AMDF77 PROPERTIES
 +        VERSION ${AMD_VERSION_MAJOR}.${AMD_VERSION_MINOR}.${AMD_VERSION_SUB}
 +        C_STANDARD 11
 +        C_STANDARD_REQUIRED ON
++        OUTPUT_NAME amdf77
 +        SOVERSION ${AMD_VERSION_MAJOR}
 +        WINDOWS_EXPORT_ALL_SYMBOLS ON )
 +endif ( )
+ 
  #-------------------------------------------------------------------------------
  # static amd library properties
- #-------------------------------------------------------------------------------
-@@ -110,6 +118,16 @@ if ( NOT NSTATIC )
-         set_target_properties ( amd_static PROPERTIES
-             OUTPUT_NAME amd_static )
-     endif ( )
-+
+@@ -123,6 +133,15 @@ if ( NOT NSTATIC )
+         INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Include>
+                   $<INSTALL_INTERFACE:${SUITESPARSE_INCLUDEDIR}> )
+ 
 +    if ( NOT NFORTRAN )
-+        add_library ( amdf77_static STATIC ${AMD_SOURCES} )
-+        set_target_properties ( amdf77_static PROPERTIES
++        add_library ( AMDF77_static STATIC ${AMDF77_SOURCES} )
++        set_target_properties ( AMDF77_static PROPERTIES
 +            VERSION ${AMD_VERSION_MAJOR}.${AMD_VERSION_MINOR}.${AMD_VERSION_SUB}
 +            C_STANDARD 11
 +            C_STANDARD_REQUIRED ON
@@ -46,36 +47,43 @@
  endif ( )
  
  #-------------------------------------------------------------------------------
-@@ -136,8 +136,14 @@ endif ( )
- 
- # suitesparseconfig:
- target_link_libraries ( amd PRIVATE ${SUITESPARSE_CONFIG_LIBRARIES} )
+@@ -133,11 +152,20 @@ endif ( )
+ target_link_libraries ( AMD PRIVATE SuiteSparse::SuiteSparseConfig )
+ target_include_directories ( AMD PUBLIC
+     "$<TARGET_PROPERTY:SuiteSparse::SuiteSparseConfig,INTERFACE_INCLUDE_DIRECTORIES>" )
 +if ( NOT NFORTRAN )
-+    target_link_libraries ( amdf77 PRIVATE ${SUITESPARSE_CONFIG_LIBRARIES} )
++    target_link_libraries ( AMDF77 PRIVATE ${SUITESPARSE_CONFIG_LIBRARIES} )
 +endif ( )
  if ( NOT NSTATIC )
-     target_link_libraries ( amd_static PUBLIC ${SUITESPARSE_CONFIG_STATIC} )
-+    if ( NOT NFORTRAN )
-+        target_link_libraries ( amdf77_static PRIVATE ${SUITESPARSE_CONFIG_STATIC} )
-+    endif ( )
+     if ( TARGET SuiteSparse::SuiteSparseConfig_static )
+         target_link_libraries ( AMD_static PUBLIC SuiteSparse::SuiteSparseConfig_static )
++        if ( NOT NFORTRAN )
++            target_link_libraries ( AMDF77_static PUBLIC SuiteSparse::SuiteSparseConfig_static )
++        endif ( )
+     else ( )
+         target_link_libraries ( AMD_static PUBLIC SuiteSparse::SuiteSparseConfig )
++        if ( NOT NFORTRAN )
++            target_link_libraries ( AMDF77_static PUBLIC SuiteSparse::SuiteSparseConfig )
++        endif ( )
+     endif ( )
  endif ( )
  
- # libm:
-@@ -142,9 +160,17 @@ install ( TARGETS amd
- install ( FILES ${CMAKE_SOURCE_DIR}/cmake_modules/FindAMD.cmake
-     DESTINATION ${SUITESPARSE_LIBDIR}/cmake/SuiteSparse 
-     COMPONENT Development )
+@@ -162,10 +190,18 @@ install ( TARGETS AMD
+     ARCHIVE DESTINATION ${SUITESPARSE_LIBDIR}
+     RUNTIME DESTINATION ${SUITESPARSE_BINDIR}
+     PUBLIC_HEADER DESTINATION ${SUITESPARSE_INCLUDEDIR} )
 +if ( NOT NFORTRAN )
-+    install ( TARGETS amdf77
++    install ( TARGETS AMDF77
 +        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} )
 +endif ( )
  if ( NOT NSTATIC )
-     install ( TARGETS amd_static
+     install ( TARGETS AMD_static
+         EXPORT AMDTargets
          ARCHIVE DESTINATION ${SUITESPARSE_LIBDIR} )
 +    if ( NOT NFORTRAN )
-+        install ( TARGETS amdf77_static
++        install ( TARGETS AMDF77_static
 +            ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} )
 +    endif ( )
  endif ( )
  
- #-------------------------------------------------------------------------------
+ # create (temporary) export target file during build

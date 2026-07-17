@@ -121,32 +121,6 @@
  /* ========================================================================== */
  /* === COLAMD version ======================================================= */
  /* ========================================================================== */
---- SuiteSparse-7.1.0/CHOLMOD/Include/cholmod.h.orig	2023-06-30 04:06:35.000000000 +0200
-+++ SuiteSparse-7.1.0/CHOLMOD/Include/cholmod.h	2026-07-11 16:46:47.400844944 +0200
-@@ -102,11 +102,6 @@
- #define CHOLMOD_SUB_VERSION    0
- #define CHOLMOD_SUBSUB_VERSION 4
- 
--/* make it easy for C++ programs to include CHOLMOD */
--#ifdef __cplusplus
--extern "C" {
--#endif
--
- /* ========================================================================== */
- /* === Include/cholmod_io64 ================================================= */
- /* ========================================================================== */
-@@ -147,6 +142,11 @@ extern "C" {
- 
- #include "SuiteSparse_config.h"
- 
-+/* make it easy for C++ programs to include CHOLMOD */
-+#ifdef __cplusplus
-+extern "C" {
-+#endif
-+
- /* ========================================================================== */
- /* === Include/cholmod_config.h ============================================= */
- /* ========================================================================== */
 --- SuiteSparse-6.0.1/CHOLMOD/GPU/cholmod_gpu_kernels.h.orig	2022-11-14 01:04:25.000000000 +0100
 +++ SuiteSparse-6.0.1/CHOLMOD/GPU/cholmod_gpu_kernels.h	2025-06-29 12:00:00.441902756 +0200
 @@ -15,13 +15,13 @@
@@ -165,20 +139,20 @@
  int createMapOnDevice ( int64_t *d_Map, int64_t *d_Ls, int64_t psi, int64_t nsrow ); 
  
  int createRelativeMapOnDevice ( int64_t *d_Map, int64_t *d_Ls, 
---- SuiteSparse-7.1.0/CSparse/Include/cs.h.orig	2023-06-30 04:06:35.000000000 +0200
-+++ SuiteSparse-7.1.0/CSparse/Include/cs.h	2026-07-11 16:48:14.433706780 +0200
-@@ -12,6 +12,11 @@
- #ifdef MATLAB_MEX_FILE
- #include "mex.h"
+--- SuiteSparse-7.3.1/CSparse/Include/cs.h.orig	2023-11-03 23:42:14.000000000 +0100
++++ SuiteSparse-7.3.1/CSparse/Include/cs.h	2026-07-16 20:18:59.258192225 +0200
+@@ -22,6 +22,11 @@
+ #define csi int64_t
  #endif
+ 
 +
 +#ifdef __cplusplus
 +extern "C" {
 +#endif
 +
- #define CS_VER 4  /* CSparse Version */
- #define CS_SUBVER 0
- #define CS_SUBSUB 4
+ /* --- primary CSparse routines and data structures ------------------------- */
+ typedef struct cs_sparse    /* matrix in compressed-column or triplet form */
+ {
 @@ -149,4 +154,9 @@ csn *cs_ndone (csn *N, cs *C, void *w, v
  #define CS_MARK(w,j) { w [j] = CS_FLIP (w [j]) ; }
  #define CS_CSC(A) (A && (A->nz == -1))
@@ -189,25 +163,6 @@
 +#endif
 +
  #endif
---- SuiteSparse-7.1.0/CXSparse/Include/cs.h.orig	2023-06-30 04:06:35.000000000 +0200
-+++ SuiteSparse-7.1.0/CXSparse/Include/cs.h	2026-07-11 16:49:21.343344299 +0200
-@@ -26,6 +26,8 @@
- #ifndef _CXS_H
- #define _CXS_H
- 
-+#include "SuiteSparse_config.h"
-+
- #if 1
- #include <complex.h>
- #define cs_complex_t double _Complex
-@@ -42,7 +44,6 @@ extern "C" {
- #define CS_COPYRIGHT "Copyright (c) Timothy A. Davis, 2006-2022"
- #define CXSPARSE
- 
--#include "SuiteSparse_config.h"
- #define cs_long_t       int64_t
- #define cs_long_t_id    "%" PRId64
- #define cs_long_t_max   INT64_MAX
 --- SuiteSparse-6.0.1/KLU/Include/klu.h.orig	2022-11-14 01:04:25.000000000 +0100
 +++ SuiteSparse-6.0.1/KLU/Include/klu.h	2025-06-29 12:24:26.447294057 +0200
 @@ -13,15 +13,15 @@
@@ -265,27 +220,8 @@
  /* -------------------------------------------------------------------------- */
  /* error codes */
  /* -------------------------------------------------------------------------- */
---- SuiteSparse-6.0.1/SPQR/Include/SuiteSparseQR_C.h.orig	2022-11-14 01:04:25.000000000 +0100
-+++ SuiteSparse-6.0.1/SPQR/Include/SuiteSparseQR_C.h	2025-06-29 12:31:45.671581241 +0200
-@@ -10,6 +10,8 @@
- #ifndef SUITESPARSEQR_C_H
- #define SUITESPARSEQR_C_H
- 
-+#include "cholmod.h"
-+
- #ifdef __cplusplus
- /* If included by a C++ program, the Complex type is std::complex<double> */
- #include <complex>
-@@ -17,7 +19,6 @@
- extern "C" {
- #endif
- 
--#include "cholmod.h"
- #include "SuiteSparseQR_definitions.h"
- 
- #ifndef __cplusplus
---- SuiteSparse-6.0.1/SPQR/Include/SuiteSparseQR.hpp.orig	2022-11-14 01:04:25.000000000 +0100
-+++ SuiteSparse-6.0.1/SPQR/Include/SuiteSparseQR.hpp	2025-06-29 12:32:21.588053332 +0200
+--- SuiteSparse-7.3.1/SPQR/Include/SuiteSparseQR.hpp.orig	2023-11-03 23:42:14.000000000 +0100
++++ SuiteSparse-7.3.1/SPQR/Include/SuiteSparseQR.hpp	2026-07-16 20:25:25.202768051 +0200
 @@ -18,11 +18,8 @@
  #include <cublas_v2.h>
  #endif
@@ -297,7 +233,7 @@
 -}
  #undef SUITESPARSE_GPU_EXTERN_ON
  
- // =============================================================================
+ #include <complex>
 --- SuiteSparse-6.0.1/UMFPACK/Include/umfpack.h.orig	2022-11-14 01:04:25.000000000 +0100
 +++ SuiteSparse-6.0.1/UMFPACK/Include/umfpack.h	2025-06-29 12:52:00.021669209 +0200
 @@ -18,6 +18,13 @@
