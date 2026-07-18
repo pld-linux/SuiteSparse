@@ -1,4 +1,4 @@
-# TODO: finish CUDA support (ENABLE_CUDA=ON), TBB
+# TODO: finish CUDA support, TBB
 #
 # Conditional build:
 %bcond_with	cuda		# CUDA support
@@ -7,26 +7,29 @@
 %bcond_without	static_libs	# static libraries
 
 # main package version
-%define		suite_ver	7.3.1
+%define		suite_ver	7.12.2
 # see */Include/*.h /VER(SION)?_CODE, C*Sparse/Include/cs.h /CS_VER Mongoose/Include/Mongoose_Version.hpp /Mongoose_VERSION_
-%define		amd_ver		3.2.1
-%define		btf_ver		2.2.1
-%define		camd_ver	3.2.1
-%define		ccolamd_ver	3.2.1
-%define		colamd_ver	3.2.1
-%define		cholmod_ver	5.0.1
-%define		csparse_ver	4.2.0
-%define		cxsparse_ver	4.2.1
-%define		klu_ver		2.2.2
-%define		ldl_ver		3.2.1
-%define		rbio_ver	4.2.1
-%define		spex_ver	2.2.1
-%define		spqr_ver	4.2.2
-%define		umfpack_ver	6.2.2
-%define		gpuruntime_ver	3.2.1
-%define		gpuqrengine_ver	3.2.2
-%define		mongoose_ver	3.2.1
-# GraphBLAS version 8.2.1, but disabled here, newer version is built from GraphBLAS.spec
+%define		amd_ver		3.3.4
+%define		btf_ver		2.3.3
+%define		camd_ver	3.3.5
+%define		ccolamd_ver	3.3.5
+%define		colamd_ver	3.3.5
+%define		cholmod_ver	5.3.4
+%define		csparse_ver	4.3.2
+%define		cxsparse_ver	4.4.2
+%define		klu_ver		2.3.6
+%define		ldl_ver		3.3.3
+%define		rbio_ver	4.3.5
+%define		spex_ver	3.2.4
+%define		spqr_ver	4.3.6
+%define		umfpack_ver	6.3.7
+%define		paru_ver	1.1.0
+%define		mongoose_ver	3.3.6
+%define		graphblas_ver	10.3.1
+%define		lagraph_ver	1.2.1
+# submodules under SPQR
+%define		gpuruntime_ver	4.3.4
+%define		gpuqrengine_ver	4.3.4
 
 Summary:	A Suite of Sparse matrix packages
 Summary(pl.UTF-8):	Zbiór pakietów do operacji na macierzach rzadkich
@@ -37,7 +40,7 @@ License:	LGPL v2.1+, GPL v2+
 Group:		Libraries
 #Source0Download: https://github.com/DrTimothyAldenDavis/SuiteSparse/releases
 Source0:	https://github.com/DrTimothyAldenDavis/SuiteSparse/archive/v%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	735b8856ce333bf5d8773ba20685c8b8
+# Source0-md5:	a1c173bd08adb990d662ad9c7ef23b5e
 Patch1:		%{name}-amdf77.patch
 Patch2:		%{name}-externc.patch
 Patch3:		%{name}-ILP32.patch
@@ -47,12 +50,14 @@ BuildRequires:	cmake >= 3.22
 BuildRequires:	gcc-fortran
 BuildRequires:	gmp-devel
 BuildRequires:	lapack-devel
+BuildRequires:	libatomic-devel
 BuildRequires:	libgomp-devel
 BuildRequires:	libstdc++-devel >= 6:7
 %if %{with system_metis}
 BuildRequires:	metis-devel >= 5
 %endif
 BuildRequires:	mpfr-devel
+BuildRequires:	rpm-build >= 4.6
 BuildRequires:	rpmbuild(macros) >= 1.605
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -159,7 +164,7 @@ Version:	%{amd_ver}
 License:	LGPL v2.1+
 Group:		Development/Libraries
 Requires:	%{name}-AMD = %{amd_ver}-%{release}
-Requires:	%{name}-config = %{suite_ver}-%{release}
+Requires:	%{name}-config-devel = %{suite_ver}-%{release}
 Provides:	AMD-devel = %{amd_ver}-%{release}
 Obsoletes:	AMD-devel < 2.4.0-5
 
@@ -259,7 +264,7 @@ Version:	%{btf_ver}
 License:	LGPL v2.1+
 Group:		Development/Libraries
 Requires:	%{name}-BTF = %{btf_ver}-%{release}
-Requires:	%{name}-config = %{suite_ver}-%{release}
+Requires:	%{name}-config-devel = %{suite_ver}-%{release}
 Provides:	BTF-devel = %{btf_ver}-%{release}
 Obsoletes:	BTF-devel < 1.2.0-3
 
@@ -373,7 +378,7 @@ Version:	%{ccolamd_ver}
 License:	LGPL v2.1+
 Group:		Development/Libraries
 Requires:	%{name}-CCOLAMD = %{ccolamd_ver}-%{release}
-Requires:	%{name}-config = %{suite_ver}-%{release}
+Requires:	%{name}-config-devel = %{suite_ver}-%{release}
 Provides:	CCOLAMD-devel = %{ccolamd_ver}-%{release}
 Obsoletes:	CCOLAMD-devel < 2.9.0-4
 
@@ -493,14 +498,15 @@ Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki CHOLMOD
 Version:	%{cholmod_ver}
 License:	GPL v2+ (some parts LGPL v2.1+)
 Group:		Development/Libraries
-Requires:	%{name}-config-devel = %{suite_ver}-%{release}
 Requires:	%{name}-AMD-devel = %{amd_ver}-%{release}
 Requires:	%{name}-CAMD-devel = %{camd_ver}-%{release}
 Requires:	%{name}-CCOLAMD-devel = %{ccolamd_ver}-%{release}
 Requires:	%{name}-CHOLMOD = %{cholmod_ver}-%{release}
 Requires:	%{name}-COLAMD-devel = %{colamd_ver}-%{release}
+Requires:	%{name}-config-devel = %{suite_ver}-%{release}
 Requires:	blas-devel
 Requires:	lapack-devel
+Requires:	libgomp-devel
 %if %{with system_metis}
 Requires:	metis-devel >= 5
 %endif
@@ -549,8 +555,8 @@ Summary(pl.UTF-8):	Pliki programistyczne biblioteki CHOLMOD_CUDA
 Version:	%{cholmod_ver}
 License:	GPL v2+
 Group:		Development/Libraries
-Requires:	%{name}-config-devel = %{suite_ver}-%{release}
 Requires:	%{name}-CHOLMOD_CUDA = %{cholmod_ver}-%{release}
+Requires:	%{name}-config-devel = %{suite_ver}-%{release}
 
 %description CHOLMOD_CUDA-devel
 Development files for CHOLMOD_CUDA library.
@@ -598,7 +604,7 @@ Version:	%{cxsparse_ver}
 License:	LGPL v2.1+
 Group:		Development/Libraries
 Requires:	%{name}-CXSparse = %{cxsparse_ver}-%{release}
-Requires:	%{name}-config = %{suite_ver}-%{release}
+Requires:	%{name}-config-devel = %{suite_ver}-%{release}
 Provides:	CXSparse-devel = %{cxsparse_ver}-%{release}
 Obsoletes:	CXSparse-devel < 0.1
 
@@ -651,10 +657,11 @@ Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki KLU
 Version:	%{klu_ver}
 License:	LGPL v2.1+
 Group:		Development/Libraries
-Requires:	%{name}-KLU = %{klu_ver}-%{release}
 Requires:	%{name}-AMD-devel = %{amd_ver}-%{release}
 Requires:	%{name}-BTF-devel = %{btf_ver}-%{release}
+Requires:	%{name}-CHOLMOD-devel = %{cholmod_ver}-%{release}
 Requires:	%{name}-COLAMD-devel = %{colamd_ver}-%{release}
+Requires:	%{name}-KLU = %{klu_ver}-%{release}
 Requires:	%{name}-config-devel = %{suite_ver}-%{release}
 Provides:	KLU-devel = %{klu_ver}-%{release}
 Obsoletes:	KLU-devel < 1.3.0-3
@@ -733,6 +740,7 @@ Summary(pl.UTF-8):	LDL - prosty rozkład LDL^T dla macierzy rzadkich
 Version:	%{ldl_ver}
 License:	LGPL v2.1+
 Group:		Libraries
+Requires:	%{name}-AMD = %{amd_ver}-%{release}
 Provides:	LDL = %{ldl_ver}-%{release}
 Obsoletes:	LDL < 2.2.0-2
 
@@ -764,8 +772,9 @@ Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki LDL
 Version:	%{ldl_ver}
 License:	LGPL v2.1+
 Group:		Development/Libraries
+Requires:	%{name}-AMD-devel = %{amd_ver}-%{release}
 Requires:	%{name}-LDL = %{ldl_ver}-%{release}
-Requires:	%{name}-config = %{suite_ver}-%{release}
+Requires:	%{name}-config-devel = %{suite_ver}-%{release}
 Provides:	LDL-devel = %{ldl_ver}-%{release}
 Obsoletes:	LDL-devel < 2.2.0-2
 
@@ -870,9 +879,12 @@ Summary(pl.UTF-8):	Plik nagłówkowy biblioteki SPEX
 Version:	%{spex_ver}
 License:	LGPL v3+ or GPL v2+
 Group:		Development/Libraries
+Requires:	%{name}-AMD-devel = %{amd_ver}-%{release}
+Requires:	%{name}-COLAMD-devel = %{colamd_ver}-%{release}
 Requires:	%{name}-SPEX = %{spex_ver}-%{release}
 Requires:	%{name}-config-devel = %{suite_ver}-%{release}
 Requires:	gmp-devel
+Requires:	libgomp-devel
 Requires:	mpfr-devel
 
 %description SPEX-devel
@@ -1041,7 +1053,7 @@ License:	GPL v2+
 Group:		Development/Libraries
 Requires:	%{name}-UMFPACK = %{umfpack_ver}-%{release}
 Requires:	%{name}-CHOLMOD-devel = %{cholmod_ver}-%{release}
-Requires:	%{name}-config = %{suite_ver}-%{release}
+Requires:	%{name}-config-devel = %{suite_ver}-%{release}
 Provides:	UMFPACK-devel = %{umfpack_ver}-%{release}
 Obsoletes:	UMFPACK-devel < 5.7.0-7
 
@@ -1066,6 +1078,56 @@ Static UMFPACK library.
 
 %description UMFPACK-static -l pl.UTF-8
 Statyczna biblioteka UMFPACK.
+
+%package ParU
+Summary:	ParU: solving sparse linear system via parallel multifrontal LU factorization algorithms
+Summary(pl.UTF-8):	ParU: rozwiązywanie rzadkich układów równań liniowych równoległymi wielofrontalnymi algorytmami rozkładu LU
+Version:	%{paru_ver}
+License:	GPL v3+
+Group:		Libraries
+Requires:	%{name}-UMFPACK = %{umfpack_ver}-%{release}
+Requires:	%{name}-config-libs = %{suite_ver}-%{release}
+
+%description ParU
+ParU is a set of routines for solving sparse linear system via
+parallel multifrontal LU factorization algorithms.
+
+%description ParU -l pl.UTF-8
+ParU to zbiór procedur do rozwiązywania rzadkich układów równań
+liniowych przy użyciu równoległych wielofrontalnych algorytmów
+rozkładu LU.
+
+%package ParU-devel
+Summary:	Header files for ParU library
+Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki ParU
+Version:	%{paru_ver}
+License:	GPL v3+
+Group:		Development/Libraries
+Requires:	%{name}-ParU = %{paru_ver}-%{release}
+Requires:	%{name}-UMFPACK-devel = %{umfpack_ver}-%{release}
+Requires:	%{name}-config-devel = %{suite_ver}-%{release}
+Requires:	blas-devel
+Requires:	libgomp-devel
+
+%description ParU-devel
+Header files for ParU library.
+
+%description ParU-devel -l pl.UTF-8
+Pliki nagłówkowe biblioteki ParU.
+
+%package ParU-static
+Summary:	Static ParU library
+Summary(pl.UTF-8):	Statyczna biblioteka ParU
+Version:	%{paru_ver}
+License:	GPL v3+
+Group:		Development/Libraries
+Requires:	%{name}-ParU-devel = %{rbio_ver}-%{release}
+
+%description ParU-static
+Static ParU library.
+
+%description ParU-static -l pl.UTF-8
+Statyczna biblioteka ParU.
 
 %package GPURuntime
 Summary:	SuiteSparse GPURuntime library
@@ -1203,6 +1265,124 @@ Static Mongoose library.
 %description Mongoose-static -l pl.UTF-8
 Statyczna biblioteka Mongoose.
 
+%package GraphBLAS
+Summary:	SuiteSparse:GraphBLAS - complete implementation of the GraphBLAS standard
+Summary(pl.UTF-8):	SuiteSparse:GraphBLAS - pełna implementacja standardu GraphBLAS
+Version:	%{graphblas_ver}
+License:	Apache v2.0
+Group:		Libraries
+URL:		https://people.engr.tamu.edu/davis/GraphBLAS.html
+Provides:	GraphBLAS = %{graphblas_ver}-%{release}
+Obsoletes:	GraphBLAS < %{graphblas_ver}
+
+%description GraphBLAS
+SuiteSparse:GraphBLAS is a complete implementation of the GraphBLAS
+standard, which defines a set of sparse matrix operations on an
+extended algebra of semirings using an almost unlimited variety of
+operators and types. When applied to sparse adjacency matrices, these
+algebraic operations are equivalent to computations on graphs.
+GraphBLAS provides a powerful and expressive framework for creating
+graph algorithms based on the elegant mathematics of sparse matrix
+operations on a semiring.
+
+%description GraphBLAS -l pl.UTF-8
+SuiteSparse:GraphBLAS to pełna implementacja standardu GraphBLAS,
+definiującego zbiór operacji na macierzach rzadkich w rozszerzonej
+algebrze półpierścieni przy użyciu nieograniczonej różnorodności
+operatorów i typów. W odniesieniu do rzadkich macierzy sąsiedztwa te
+operacje algebraiczne są równoważne obliczeniom na grafach. GraphBLAS
+zapewnia potężny i ekspresyjny szkielet do tworzenia algorytmów
+grafowych w oparciu o elegancką matematykę operacji na macierzach
+rzadkich na półpierścieniu.
+
+%package GraphBLAS-devel
+Summary:	Header files for GraphBLAS library
+Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki GraphBLAS
+Version:	%{graphblas_ver}
+License:	Apache v2.0
+Group:		Development/Libraries
+Requires:	%{name}-GraphBLAS = %{graphblas_ver}-%{release}
+Requires:	%{name}-config = %{suite_ver}-%{release}
+Provides:	GraphBLAS-devel = %{graphblas_ver}-%{release}
+Obsoletes:	GraphBLAS-devel < %{graphblas_ver}
+
+%description GraphBLAS-devel
+Header files for GraphBLAS library.
+
+%description GraphBLAS-devel -l pl.UTF-8
+Pliki nagłówkowe biblioteki GraphBLAS.
+
+%package GraphBLAS-static
+Summary:	Static GraphBLAS library
+Summary(pl.UTF-8):	Statyczna biblioteka GraphBLAS
+Version:	%{graphblas_ver}
+Group:		Development/Libraries
+Requires:	%{name}-GraphBLAS-devel = %{graphblas_ver}-%{release}
+Provides:	GraphBLAS-static = %{graphblas_ver}-%{release}
+Obsoletes:	GraphBLAS-static < %{graphblas_ver}
+
+%description GraphBLAS-static
+Static GraphBLAS library.
+
+%description GraphBLAS-static -l pl.UTF-8
+Statyczna biblioteka GraphBLAS.
+
+%package GraphBLAS-apidocs
+Summary:	API documentation for GraphBLAS library
+Summary(pl.UTF-8):	Dokumentacja API biblioteki GraphBLAS
+Version:	%{graphblas_ver}
+Group:		Documentation
+Provides:	GraphBLAS-apidocs = %{graphblas_ver}
+Obsoletes:	GraphBLAS-apidocs < %{graphblas_ver}
+BuildArch:	noarch
+
+%description GraphBLAS-apidocs
+API documentation for GraphBLAS library.
+
+%description GraphBLAS-apidocs -l pl.UTF-8
+Dokumentacja API biblioteki GraphBLAS.
+
+%package LAGraph
+Summary:	Library for collecting algorithms that use GraphBLAS
+Summary(pl.UTF-8):	Biblioteka gromadząca algorytmy wykorzystujące GraphBLAS
+Version:	%{lagraph_ver}
+Group:		Libraries
+Requires:	%{name}-GraphBLAS = %{graphblas_ver}-%{release}
+
+%description LAGraph
+LAGraph is a library for collecting algorithms that use GraphBLAS.
+
+%description LAGraph -l pl.UTF-8
+LAGraph to biblioteka gromadząca algorytmy wykorzystujące GraphBLAS.
+
+%package LAGraph-devel
+Summary:	Header files for LAGraph library
+Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki LAGraph
+Version:	%{lagraph_ver}
+License:	Apache v2.0
+Group:		Development/Libraries
+Requires:	%{name}-GraphBLAS-devel = %{graphblas_ver}-%{release}
+Requires:	%{name}-LAGraph = %{lagraph_ver}-%{release}
+
+%description LAGraph-devel
+Header files for LAGraph library.
+
+%description LAGraph-devel -l pl.UTF-8
+Pliki nagłówkowe biblioteki LAGraph.
+
+%package LAGraph-static
+Summary:	Static LAGraph library
+Summary(pl.UTF-8):	Statyczna biblioteka LAGraph
+Version:	%{lagraph_ver}
+Group:		Development/Libraries
+Requires:	%{name}-LAGraph-devel = %{lagraph_ver}-%{release}
+
+%description LAGraph-static
+Static LAGraph library.
+
+%description LAGraph-static -l pl.UTF-8
+Statyczna biblioteka LAGraph.
+
 %prep
 %setup -q
 %patch -P1 -p1
@@ -1212,27 +1392,17 @@ Statyczna biblioteka Mongoose.
 %endif
 
 %build
-# TODO: GraphBLAS?
-%define modules SuiteSparse_config AMD BTF CAMD CCOLAMD COLAMD CHOLMOD CXSparse LDL KLU UMFPACK RBio %{?with_cuda:SuiteSparse_GPURuntime GPUQREngine} SPQR SPEX Mongoose
-
-for mod in %{modules} ; do
-%cmake -S ${mod} -B ${mod}/build \
-	-DBLA_PREFER_PKGCONFIG=ON \
-	-DCMAKE_INSTALL_INCLUDEDIR:PATH=include/suitesparse \
-	%{!?with_cuda:-DENABLE_CUDA=OFF} \
-	%{!?with_metis:-DNPARTITION=ON} \
-	%{!?with_static_libs:-DNSTATIC=ON}
-
-%{__make} -C ${mod}/build
-done
+%cmake -B build \
+	%{!?with_static_libs:-DBUILD_STATIC_LIBS=OFF} \
+	%{!?with_metis:-DCHOLMOD_PARTITION=OFF} \
+	%{?with_static_libs:-DGRAPHBLAS_BUILD_STATIC_LIBS=ON} \
+	%{!?with_cuda:-DSUITESPARSE_USE_CUDA=OFF}
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
-for mod in %{modules} ; do
-%{__make} -C ${mod}/build install \
+%{__make} -C build install \
 	DESTDIR=$RPM_BUILD_ROOT
-done
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -1290,6 +1460,15 @@ rm -rf $RPM_BUILD_ROOT
 
 %post	UMFPACK -p /sbin/ldconfig
 %postun	UMFPACK -p /sbin/ldconfig
+
+%post	ParU -p /sbin/ldconfig
+%postun	ParU -p /sbin/ldconfig
+
+%post	GraphBLAS -p /sbin/ldconfig
+%postun	GraphBLAS -p /sbin/ldconfig
+
+%post	LAGraph -p /sbin/ldconfig
+%postun	LAGraph -p /sbin/ldconfig
 
 %post	GPURuntime -p /sbin/ldconfig
 %postun	GPURuntime -p /sbin/ldconfig
@@ -1549,6 +1728,25 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libldl.a
 %endif
 
+%files ParU
+%defattr(644,root,root,755)
+%doc ParU/README.md ParU/Doc/ChangeLog
+%{_libdir}/libparu.so.*.*.*
+%ghost %{_libdir}/libparu.so.1
+
+%files ParU-devel
+%defattr(644,root,root,755)
+%{_libdir}/libparu.so
+%{_includedir}/suitesparse/ParU.h
+%{_libdir}/cmake/ParU
+%{_pkgconfigdir}/ParU.pc
+
+%if %{with static_libs}
+%files ParU-static
+%defattr(644,root,root,755)
+%{_libdir}/libparu.a
+%endif
+
 %files RBio
 %defattr(644,root,root,755)
 %doc RBio/README.txt RBio/Doc/{ChangeLog,License.txt}
@@ -1572,12 +1770,16 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc SPEX/README.md
 %{_libdir}/libspex.so.*.*.*
-%ghost %{_libdir}/libspex.so.2
+%ghost %{_libdir}/libspex.so.3
+%{_libdir}/libspexpython.so.*.*.*
+%ghost %{_libdir}/libspexpython.so.3
 
 %files SPEX-devel
 %defattr(644,root,root,755)
 %{_libdir}/libspex.so
+%{_libdir}/libspexpython.so
 %{_includedir}/suitesparse/SPEX.h
+%{_includedir}/suitesparse/spex_python_connect.h
 %{_libdir}/cmake/SPEX
 %{_pkgconfigdir}/SPEX.pc
 
@@ -1684,20 +1886,67 @@ rm -rf $RPM_BUILD_ROOT
 %files Mongoose
 %defattr(644,root,root,755)
 %doc Mongoose/README.md
-%attr(755,root,root) %{_bindir}/mongoose
-%{_libdir}/libmongoose.so.*.*.*
-%ghost %{_libdir}/libmongoose.so.3
+%attr(755,root,root) %{_bindir}/suitesparse_mongoose
+%{_libdir}/libsuitesparse_mongoose.so.*.*.*
+%ghost %{_libdir}/libsuitesparse_mongoose.so.3
 
 %files Mongoose-devel
 %defattr(644,root,root,755)
 %doc Mongoose/Doc/Mongoose_UserGuide.pdf
-%{_libdir}/libmongoose.so
+%{_libdir}/libsuitesparse_mongoose.so
 %{_includedir}/suitesparse/Mongoose.hpp
-%{_libdir}/cmake/Mongoose
-%{_pkgconfigdir}/Mongoose.pc
+%{_libdir}/cmake/SuiteSparse_Mongoose
+%{_pkgconfigdir}/SuiteSparse_Mongoose.pc
 
 %if %{with static_libs}
 %files Mongoose-static
 %defattr(644,root,root,755)
-%{_libdir}/libmongoose.a
+%{_libdir}/libsuitesparse_mongoose.a
+%endif
+
+%files GraphBLAS
+%defattr(644,root,root,755)
+%doc GraphBLAS/{CITATION.bib,LICENSE,README.md} GraphBLAS/Doc/ChangeLog
+%{_libdir}/libgraphblas.so.*.*.*
+%ghost %{_libdir}/libgraphblas.so.10
+
+%files GraphBLAS-devel
+%defattr(644,root,root,755)
+%{_libdir}/libgraphblas.so
+%{_includedir}/suitesparse/GraphBLAS.h
+%{_libdir}/cmake/GraphBLAS
+%{_pkgconfigdir}/GraphBLAS.pc
+
+%if %{with static_libs}
+%files GraphBLAS-static
+%defattr(644,root,root,755)
+%{_libdir}/libgraphblas.a
+%endif
+
+%files GraphBLAS-apidocs
+%defattr(644,root,root,755)
+%doc GraphBLAS/Doc/GraphBLAS_API_C_v2.1.0.pdf GraphBLAS/Doc/papers/{CSC20_OpenMP_GraphBLAS.pdf,Davis_HPEC18.pdf,HPEC19.pdf}
+
+%files LAGraph
+%defattr(644,root,root,755)
+%doc LAGraph/{Acknowledgments.txt,ChangeLog,Contributors.txt,LICENSE,README.md}
+%{_libdir}/liblagraph.so.*.*.*
+%ghost %{_libdir}/liblagraph.so.1
+%{_libdir}/liblagraphx.so.*.*.*
+%ghost %{_libdir}/liblagraphx.so.1
+
+%files LAGraph-devel
+%defattr(644,root,root,755)
+%{_libdir}/liblagraph.so
+%{_libdir}/liblagraphx.so
+%{_includedir}/suitesparse/LAGraph.h
+%{_includedir}/suitesparse/LAGraphX.h
+%{_libdir}/cmake/LAGraph
+%{_pkgconfigdir}/LAGraph.pc
+
+%if %{with static_libs}
+%files LAGraph-static
+%defattr(644,root,root,755)
+%{_libdir}/liblagraph.a
+%{_libdir}/liblagraphx.a
 %endif
